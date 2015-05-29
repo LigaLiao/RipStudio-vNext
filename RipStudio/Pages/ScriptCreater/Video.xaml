@@ -1,0 +1,21 @@
+﻿<UserControl x:Class="RipStudio.Pages.ScriptCreater.Video"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mui="http://firstfloorsoftware.com/ModernUI"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="600">
+    <Grid Style="{StaticResource ContentRoot}" >
+        <mui:ModernTab x:Name="ff" SelectedSource="Pages/ScriptCreater/VideoContent/CropResize.xaml"  Layout="Tab">
+            <mui:ModernTab.Links>
+                <mui:Link DisplayName="Main" Source="Pages/ScriptCreater/VideoContent/CropResize.xaml"  />
+                <!--<mui:Link DisplayName="TIVTC" Source="Pages/ScriptCreater/VideoContent/TIVTC.xaml"  />-->
+                <mui:Link DisplayName="Color" Source="Pages/ScriptCreater/VideoContent/ColorPG.xaml"  />
+                <mui:Link DisplayName="De" Source="Pages/ScriptCreater/VideoContent/De.xaml"  />
+                <mui:Link DisplayName="Subtitle" Source="Pages/ScriptCreater/VideoContent/Subtitle.xaml"  />
+                <mui:Link DisplayName="Other" Source="Pages/ScriptCreater/VideoContent/Other.xaml"  />
+            </mui:ModernTab.Links>
+        </mui:ModernTab>
+    </Grid>
+</UserControl>

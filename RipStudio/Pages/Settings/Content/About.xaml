@@ -1,0 +1,31 @@
+﻿<UserControl x:Class="RipStudio.Pages.Settings.Content.About"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mui="http://firstfloorsoftware.com/ModernUI"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid>
+        <ScrollViewer>
+            <Grid>
+                <StackPanel x:Name="Panel" MinWidth="150" >
+                    <TextBlock Text="关于" Style="{StaticResource Heading2}" Margin="0,0,0,8" />
+                    <TextBlock Text="RipStudio" Style="{StaticResource Heading2}" />
+                    <TextBlock Text="版本：vNext Preview 2(2.0.2015.0527)" />
+                    <mui:BBCodeBlock  BBCode="        [url=http://www.ripstudio.net/]RipStudio[/url]是个先进的视音频重编码软件，我觉得它很棒，但是这并不是我100%一人完成的，我使用了很多开源库来开发，以下是所使用的开源库列表，并在此致谢！&#x000A;" TextWrapping="Wrap" VerticalAlignment="Top" Height="65" Margin="0,8,0,0" />
+                    <mui:BBCodeBlock BBCode="· [url=https://github.com/firstfloorsoftware/mui/]Modern UI for WPF[/url]"  />
+                    <mui:BBCodeBlock BBCode="· [url=http://sourceforge.net/projects/avisynth2/]AviSynth[/url]"/>
+                    <mui:BBCodeBlock BBCode="· [url=http://www.videolan.org/developers/x264.html]libx264[/url]"  />
+                    <mui:BBCodeBlock BBCode="· [url=http://www.videolan.org/developers/x265.html]libx265[/url]"  />
+                    <mui:BBCodeBlock BBCode="· [url=http://sourceforge.net/p/opencore-amr/fdk-aac/ci/master/tree/l]libfdk-aac[/url]"  />
+                    <mui:BBCodeBlock BBCode="· [url=https://xiph.org/flac/]libFLAC[/url]"  />
+                    <mui:BBCodeBlock BBCode="· [url=http://mediaarea.net/]MediaInfo[/url]"/>
+                </StackPanel>
+         
+            </Grid>
+        </ScrollViewer>
+        
+        <TextBlock Text="Copyright © 2015 LigaLiao. All Rights Reserved." HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
+    </Grid>
+</UserControl>

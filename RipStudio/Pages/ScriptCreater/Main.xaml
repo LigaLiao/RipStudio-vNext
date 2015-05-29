@@ -1,0 +1,48 @@
+﻿<UserControl x:Class="RipStudio.Pages.ScriptCreater.Main"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mui="http://firstfloorsoftware.com/ModernUI"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="700">
+    <Grid Style="{StaticResource ContentRoot}" Margin="0,16,16,16" >
+        <Grid VerticalAlignment="Top">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="{DynamicResource AviSynth_VideoInput}"  Margin="0,1,0,0" />
+            <TextBox x:Name="VideoTB" Grid.Column="1" Text=""  PreviewDragEnter="VideoTB_PreviewDragEnter"   PreviewDrop="VideoTB_PreviewDrop" PreviewDragOver="VideoTB_PreviewDragOver" />
+            <Button x:Name="VideoB" Grid.Column="2" Content="..."  Padding="8,2" Click="VideoB_Click"  Margin="8,0,0,0"/>
+        </Grid>
+        <Grid VerticalAlignment="Top" Margin="0,52,0,0" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="{DynamicResource AviSynth_AudioInput}" Margin="0,2,0,0"  />
+            <TextBox x:Name="AudioTB" Grid.Column="1" Text=""  IsEnabled="False" />
+            <Button x:Name="AudioB" Grid.Column="2" Content="..." Padding="8,2" IsEnabled="False" Click="AudioB_Click" Margin="8,0,0,0"/>
+        </Grid>
+        <!--<TextBlock Text="{DynamicResource AviSynth_AudioInput}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,52,0,0" />
+        <TextBox x:Name="AudioTB" Text="" VerticalAlignment="Top" Margin="60,50,40,0" IsEnabled="False" />
+        <Button x:Name="AudioB" Content="..." HorizontalAlignment="Right" VerticalAlignment="Top" Padding="8,2" Margin="0,50,0,0" IsEnabled="False" Click="AudioB_Click"/>-->
+        <StackPanel  HorizontalAlignment="Left" VerticalAlignment="Top"  Margin="0,100,0,0">
+            <CheckBox x:Name="IsSame" Content="{DynamicResource AviSynth_CheckBox_0}"  IsChecked="True" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
+            <CheckBox x:Name="AutoLoadSub" Content="{DynamicResource AviSynth_CheckBox_1}" ToolTip="如果有才会载入，如果勾选了没有字幕也没事"  IsChecked="True"  />
+        </StackPanel>
+        <!--<TextBlock Text="PS:这个脚本创建功能是基本、简单的，如果不能满足你，推荐用AVSP,批量也请自己修改脚本" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,150,0,0"/>-->
+        <StackPanel VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="0,0,0,4" >
+            <CheckBox x:Name="IsSaveToVideoFolder" Content="{DynamicResource AviSynth_CheckBox_3}" ToolTip="勾选了保存脚本就不会出现保存地址的窗口" HorizontalAlignment="Left" VerticalAlignment="Bottom" />
+            <CheckBox x:Name="IsLoadingEncoder" Content="{DynamicResource AviSynth_CheckBox_2}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0,0,0,4" />
+        </StackPanel>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">
+            <Button x:Name="OpenScript" Content="{DynamicResource AviSynth_Button_0}" Padding="8,2" />
+            <Button x:Name="PreviewScript" Content="{DynamicResource AviSynth_Button_1}"  Padding="8,2" Click="PreviewScript_Click" Margin="8,0"   />
+            <Button x:Name="SaveScript" Content="{DynamicResource AviSynth_Button_2}" Padding="8,2" Click="SaveScript_Click"  />
+        </StackPanel>
+    </Grid>
+</UserControl>

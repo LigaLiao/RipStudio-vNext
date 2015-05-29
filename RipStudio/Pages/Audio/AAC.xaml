@@ -1,0 +1,77 @@
+﻿<UserControl x:Class="RipStudio.Pages.Audio.AAC"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mui="http://firstfloorsoftware.com/ModernUI"
+             mc:Ignorable="d" 
+             d:DesignHeight="360" d:DesignWidth="600">
+    <Grid Style="{StaticResource ContentRoot}" Margin="0,16,16,16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="72"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid VerticalAlignment="Top">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock  Text="{DynamicResource AV_in}" Margin="0,2,0,0"  />
+                <TextBox x:Name="In" Grid.Column="1" PreviewDragEnter="In_PreviewDragEnter" PreviewDragOver="In_PreviewDragOver" PreviewDrop="In_PreviewDrop"/>
+                <Button x:Name="InB" Grid.Column="2" Content="..." Padding="8,2,8,3" Click="InB_Click" Margin="8,0,0,0"/>
+            </Grid>
+            <Grid VerticalAlignment="Top" Margin="0,32,0,0" >
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="auto"/>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="auto"/>
+                </Grid.ColumnDefinitions>
+                <TextBlock  Text="{DynamicResource Audio_out}" Margin="0,2,0,0" />
+                <TextBox x:Name="Out" Grid.Column="1" />
+                <Button x:Name="OutB" Grid.Column="2"  Content="..." Padding="8,2,8,3" Click="OutB_Click" Margin="8,0,0,0"/>
+            </Grid>
+            <!--<TextBlock VerticalAlignment="Top" Margin="0,16,0,0" Text="脚本输入:" HorizontalAlignment="Left"/>
+            <TextBox x:Name="In" VerticalAlignment="Top" Margin="64,16,32,0" PreviewDragEnter="In_PreviewDragEnter" PreviewDragOver="In_PreviewDragOver" PreviewDrop="In_PreviewDrop"/>
+            <Button x:Name="InB" VerticalAlignment="Top" Margin="0,16,0,0" HorizontalAlignment="Right" Content="..." Padding="8,2,8,3" Click="InB_Click"/>
+
+            <TextBlock VerticalAlignment="Top" Margin="0,48,0,0" Text="媒体输出:" HorizontalAlignment="Left"/>
+            <TextBox x:Name="Out" VerticalAlignment="Top" Margin="64,48,32,0" />
+            <Button x:Name="OutB" VerticalAlignment="Top" Margin="0,48,0,0" HorizontalAlignment="Right" Content="..." Padding="8,2,8,3" Click="OutB_Click"/>-->
+        </Grid>
+        <TextBlock  Grid.Row="1" Text="{DynamicResource AAC_introduction}" TextWrapping="Wrap" VerticalAlignment="Top" />
+        <Grid Grid.Row="2" Height="140">
+            <TextBlock HorizontalAlignment="Left" VerticalAlignment="Top" Text="AAC编码选项:" Margin="0,8,0,0"/>
+            <RadioButton x:Name="ConstantBitrate" Content="Constant Bitrate-192(kbps)" HorizontalAlignment="Left" VerticalAlignment="Top" IsChecked="True" Margin="0,36,0,0" Checked="ConstantBitrate_Checked"/>
+            <RadioButton x:Name="VariableBitrate" Content="Variable Bitrate" HorizontalAlignment="Left" VerticalAlignment="Center" Checked="VariableBitrate_Checked" Margin="0,10,0,0"/>
+            <Slider x:Name="BitrateValue" Maximum="384" Minimum="32" SmallChange="4" LargeChange="4" VerticalAlignment="Bottom" Value="192" Margin="0,0,0,8" ValueChanged="BitrateValue_ValueChanged"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Top" Margin="0,36,0,0">
+                <TextBlock Text="Profile: " Margin="0,2,0,0" />
+                <ComboBox x:Name="Profile" SelectedIndex="0">
+                    <ComboBoxItem Content="Automatic"/>
+                    <ComboBoxItem Content="AAC LC"/>
+                    <ComboBoxItem Content="HE-AAC"/>
+                    <ComboBoxItem Content="HE-AAC v2"/>
+                </ComboBox>
+            </StackPanel>
+            <CheckBox x:Name="Afterburner" Content="Enable Afterburner" HorizontalAlignment="Right" VerticalAlignment="Center" IsChecked="True" Margin="0,10,0,0"/>
+            <!--<TextBlock Text="Profile:" HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,100,0"/>
+            <ComboBox HorizontalAlignment="Right" VerticalAlignment="Center" Width="96" SelectedIndex="0" Margin="100,0,0,0">
+                <ComboBoxItem Content="Main"/>
+                <ComboBoxItem Content="Low"/>
+            </ComboBox>-->
+        </Grid>
+
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <CheckBox x:Name="Now" Content="{DynamicResource AV_Bottom_0}" Grid.Column="0" HorizontalAlignment="Right" Padding="0,0,32,0" />
+            <Button Content="{DynamicResource AV_Bottom_1}" Grid.Column="1"  Click="Button_Click" Padding="8,2,8,3"/>
+        </Grid>
+    </Grid>
+</UserControl>

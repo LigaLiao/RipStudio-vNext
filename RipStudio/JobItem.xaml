@@ -1,0 +1,83 @@
+﻿<ListViewItem x:Class="RipStudio.JobItem"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+              xmlns:cm="clr-namespace:System.ComponentModel;assembly=System"
+Height="44" MinWidth="300"  Background="#3F000000"   ContextMenu="{DynamicResource ContextMenu}" VerticalContentAlignment="Stretch" Style="{DynamicResource ListViewItemStyle}" ContextMenuOpening="ListViewItem_ContextMenuOpening">
+    <ListViewItem.Resources>
+        <cm:BackgroundWorker x:Key="backgroundWorker"
+          WorkerReportsProgress="True" WorkerSupportsCancellation="True"
+          DoWork="backgroundWorker_DoWork" ProgressChanged="backgroundWorker_ProgressChanged" 
+          RunWorkerCompleted="backgroundWorker_RunWorkerCompleted"/>
+        <ContextMenu x:Key="ContextMenu">
+            <MenuItem x:Name="开始" Header="开始" Click="开始_Click"  />
+            <MenuItem x:Name="停止" Header="停止" Click="停止_Click" />
+            <MenuItem x:Name="删除" Header="删除" Click="删除_Click"  />
+            <MenuItem x:Name="打开输入的脚本" Header="打开输入的脚本" Click="打开输入的脚本_Click" />
+            <MenuItem x:Name="打开输出文件夹" Header="打开输出文件夹" Click="打开输出文件夹_Click" />
+            <MenuItem x:Name="查看任务信息" Header="查看任务信息" Click="查看任务信息_Click" />
+        </ContextMenu>
+        <Style x:Key="ListViewItemStyle" TargetType="{x:Type ListViewItem}">
+            <Setter Property="FocusVisualStyle" Value="{x:Null}"/>
+            <Setter Property="Background" Value="Transparent"/>
+            <!--<Setter Property="BorderBrush" Value="{DynamicResource WindowBorder}"/>-->
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Margin" Value="0,1"/>
+            <Setter Property="Foreground" Value="{DynamicResource WindowText}"/>
+            <Setter Property="Padding" Value="5,2"/>
+            <Setter Property="HorizontalContentAlignment" Value="Stretch"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="{x:Type ListViewItem}">
+                        <Grid Background="{TemplateBinding Background}">
+                            <Border x:Name="Selection" Visibility="Collapsed"/>
+                            <GridViewRowPresenter Columns="{TemplateBinding GridView.ColumnCollection}" Content="{TemplateBinding Content}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" Grid.RowSpan="2" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                            <ContentPresenter x:Name="contentPresenter" ContentTemplate="{TemplateBinding ContentTemplate}" Content="{TemplateBinding Content}" ContentStringFormat="{TemplateBinding ContentStringFormat}" HorizontalAlignment="{TemplateBinding HorizontalContentAlignment}" Margin="{TemplateBinding Padding}" SnapsToDevicePixels="{TemplateBinding SnapsToDevicePixels}" Visibility="Collapsed" VerticalAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Grid>
+                        <ControlTemplate.Triggers>
+                            <Trigger Property="GridView.ColumnCollection" Value="{x:Null}">
+                                <Setter Property="Visibility" TargetName="contentPresenter" Value="Visible"/>
+                            </Trigger>
+                            <Trigger Property="IsMouseOver" Value="True">
+                                <Setter Property="Visibility" TargetName="Selection" Value="Visible"/>
+                                <Setter Property="Background" TargetName="Selection" Value="{DynamicResource ItemBackgroundHover}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource ItemTextHover}"/>
+                            </Trigger>
+                            <Trigger Property="IsSelected" Value="True">
+                                <Setter Property="Visibility" TargetName="Selection" Value="Visible"/>
+                                <Setter Property="Background" TargetName="Selection" Value="{DynamicResource Accent}"/>
+                                <Setter Property="Foreground" Value="{DynamicResource ItemTextSelected}"/>
+                            </Trigger>
+                            <Trigger Property="IsEnabled" Value="False">
+                                <Setter Property="Foreground" Value="{DynamicResource ButtonTextDisabled}"/>
+                            </Trigger>
+                        </ControlTemplate.Triggers>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+    </ListViewItem.Resources>
+    <Grid >
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="44"/>
+            <ColumnDefinition Width="*"/>
+            <ColumnDefinition Width="0.6*"/>
+            <ColumnDefinition Width="44"/>
+        </Grid.ColumnDefinitions>
+        <TextBlock x:Name="TypeTB" Text="H264" HorizontalAlignment="Center" VerticalAlignment="Center"/>
+        <StackPanel Grid.Column="1" VerticalAlignment="Center" Margin="6,0">
+            <TextBlock x:Name="InTB" Text="输入文件   " TextWrapping="NoWrap"/>
+            <TextBlock x:Name="OutTB" Text="输出文件   " TextWrapping="NoWrap"/>
+        </StackPanel>
+        <!--<Grid Grid.Column="1" VerticalAlignment="Center" Margin="6,0">
+            <TextBlock x:Name="InTB" Text="输入文件   " TextWrapping="NoWrap"/>
+        </Grid>-->
+        <Grid Grid.Column="2">
+            <ProgressBar x:Name="PB" Grid.Column="2" Height="16" VerticalAlignment="Top" Margin="0,2,0,0" />
+            <TextBlock x:Name="Speed"  Text="速度" VerticalAlignment="Bottom" HorizontalAlignment="Center" Margin="0,0,0,2" />
+        </Grid>
+
+        <TextBlock x:Name="State" Grid.Column="3"  Text="等待" VerticalAlignment="Center" HorizontalAlignment="Center"/>
+    </Grid>
+</ListViewItem>

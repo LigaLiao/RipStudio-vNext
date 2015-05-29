@@ -1,0 +1,29 @@
+﻿<UserControl x:Class="RipStudio.Pages.ScriptCreater.VideoContent.TIVTC"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mui="http://firstfloorsoftware.com/ModernUI"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="600">
+    <Grid Style="{StaticResource ContentRoot}">
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" VerticalAlignment="Center">
+            <TextBlock Text="片源类型:" Margin="4,2,4,0"/>
+            <ComboBox Width="120" SelectedIndex="0">
+                <ComboBoxItem Content="NTSC"/>
+                <ComboBoxItem Content="PAL"/>
+            </ComboBox>
+            <TextBlock Text="模式:" Margin="4,2,4,0"/>
+            <ComboBox Width="120" SelectedIndex="0">
+                <ComboBoxItem Content="电影，非卡通"/>
+                <ComboBoxItem Content="电影，卡通"/>
+                <ComboBoxItem Content="混合源，非卡通"/>
+                <ComboBoxItem Content="混合源，卡通"/>
+            </ComboBox>
+            <ComboBox Width="180" Visibility="Collapsed" SelectedIndex="0">
+                <ComboBoxItem Content="不删除重复帧（只进行场匹配）"/>
+                <ComboBoxItem Content="每25帧中删1帧"/>
+            </ComboBox>
+        </StackPanel>
+    </Grid>
+</UserControl>

@@ -1,0 +1,18 @@
+﻿<UserControl x:Class="RipStudio.Pages.Settings.SettingsPage"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mui="http://firstfloorsoftware.com/ModernUI"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid Style="{StaticResource ContentRoot}">
+        <mui:ModernTab SelectedSource="Pages/Settings/Content/SettingsAppearance.xaml" Layout="List">
+            <mui:ModernTab.Links>
+                <mui:Link x:Name="Link1" DisplayName="{DynamicResource Settings_Style}" Source="Pages/Settings/Content/SettingsAppearance.xaml" />
+                <mui:Link x:Name="Link2" DisplayName="{DynamicResource Settings_Config}" Source="Pages/Settings/Content/Config.xaml" />
+                <mui:Link x:Name="Link3" DisplayName="{DynamicResource Settings_About}" Source="Pages/Settings/Content/About.xaml" />
+            </mui:ModernTab.Links>
+        </mui:ModernTab>
+    </Grid>
+</UserControl>

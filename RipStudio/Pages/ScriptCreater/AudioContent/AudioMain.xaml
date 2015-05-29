@@ -1,0 +1,75 @@
+﻿<UserControl x:Class="RipStudio.Pages.ScriptCreater.AudioContent.AudioMain"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mui="http://firstfloorsoftware.com/ModernUI"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="600" Margin="0,0,16,0">
+    <Grid Style="{StaticResource ContentRoot}" Margin="0">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="0.5*"/>
+                <RowDefinition Height="0.5*"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <Grid>
+                <StackPanel VerticalAlignment="Center" Orientation="Horizontal" Margin="0,8" HorizontalAlignment="Left">
+                    <TextBlock Text="Preferred Decoder:  " HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,0,1"/>
+                    <ComboBox x:Name="Decoder" HorizontalAlignment="Center" VerticalAlignment="Center" Width="200" SelectedIndex="0" Margin="0,0,4,0">
+                        <ComboBoxItem Content="Auto"/>
+                        <ComboBoxItem Content="FFAudioSource"/>
+                        <ComboBoxItem Content="BassAudio"/>
+                        <ComboBoxItem Content="LWLLibavAudioSource"/>
+                    </ComboBox>
+                </StackPanel>
+                <StackPanel HorizontalAlignment="Right" VerticalAlignment="Center" Orientation="Horizontal" Margin="0,8">
+                    <TextBlock Text="Sample Rate:  " HorizontalAlignment="Right" VerticalAlignment="Center" Margin="4,0,0,1"/>
+                    <ComboBox x:Name="SampleRateCB" HorizontalAlignment="Center" VerticalAlignment="Center" Width="200" SelectedIndex="0">
+                        <ComboBoxItem Content="Keep Original Sample Rate"/>
+                        <ComboBoxItem Content="Change to 8000hz"/>
+                        <ComboBoxItem Content="Change to 11025hz"/>
+                        <ComboBoxItem Content="Change to 22050hz"/>
+                        <ComboBoxItem Content="Change to 32000hz"/>
+                        <ComboBoxItem Content="Change to 44100hz"/>
+                        <ComboBoxItem Content="Change to 48000hz"/>
+                        <ComboBoxItem Content="Change to 96000hz"/>
+                    </ComboBox>
+                </StackPanel>
+            </Grid>
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal" Margin="0,8" Grid.Row="1">
+                <TextBlock Text="Audio Channels:      " HorizontalAlignment="Right" VerticalAlignment="Center" Margin="0,0,0,1"/>
+                <ComboBox IsEnabled="False" HorizontalAlignment="Center" VerticalAlignment="Center" Width="320" SelectedIndex="0">
+                    <ComboBoxItem Content="Keep Original Channels"/>
+                    <ComboBoxItem Content="Downmix Multichannel to Stereo"/>
+                    <ComboBoxItem Content="Downmix Multichannel to Dolby Pro Logic"/>
+                    <ComboBoxItem Content="Downmix Multichannel to Dolby Pro Logic II"/>
+                    <ComboBoxItem Content="Convert to Mono"/>
+                    <ComboBoxItem Content="Upmix 2 to 5.1 via SuperEQ(slow)"/>
+                    <ComboBoxItem Content="Upmix 2 to 5.1 via Sox equalizer adjustments"/>
+                    <ComboBoxItem Content="Upmix 2 to 5.1 whth center channnel dialog"/>
+                </ComboBox>
+            </StackPanel>
+
+            <CheckBox IsEnabled="False" x:Name="DynamicrangeCompression" Content="Apply Dynamicrange Compression"  Grid.Row="3" HorizontalAlignment="Left"/>
+            <StackPanel HorizontalAlignment="Right" VerticalAlignment="Center" Orientation="Horizontal" Margin="0,8" Grid.Row="3">
+                <CheckBox x:Name="Normalize" Content="Normalize Peaks to " Margin="0,0,4,0"/>
+                <TextBox x:Name="NormalizeTB" Text="100" Width="40" MinWidth="40" MaxWidth="40"/>
+            </StackPanel>
+            <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Orientation="Horizontal" Margin="0,8" Grid.Row="2">
+                <TextBlock  Text="Delay:  "/>
+                <TextBox x:Name="Delay" Text="0" Width="52" MinWidth="52" MaxWidth="52" Margin="4,0"/>
+                <TextBlock Text=" ms"/>
+            </StackPanel>
+            <!--<Grid Grid.Row="4">
+                <CheckBox x:Name="IsLoadingEncoder" Content="保存脚本完后加载到音频编码器" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0,0,0,4" />
+                <Button x:Name="OpenScript" Content="打开脚本" HorizontalAlignment="Right" VerticalAlignment="Bottom" Padding="8,2" Margin="0,0,175,0" />
+                <Button x:Name="PreviewScript" Content="预览脚本" HorizontalAlignment="Right" VerticalAlignment="Bottom" Padding="8,2" Margin="0,0,100,0" IsEnabled="False"  />
+                <Button Content="单独另存脚本" HorizontalAlignment="Right" VerticalAlignment="Bottom" Padding="8,2"  />
+            </Grid>-->
+        </Grid>
+
+    </Grid>
+</UserControl>

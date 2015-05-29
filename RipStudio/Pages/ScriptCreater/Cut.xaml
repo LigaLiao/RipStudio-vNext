@@ -1,0 +1,38 @@
+﻿<UserControl x:Class="RipStudio.Pages.ScriptCreater.Cut"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mui="http://firstfloorsoftware.com/ModernUI"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="600">
+    <Grid Style="{StaticResource ContentRoot}">
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <DataGrid Name="DG1" ItemsSource="{Binding}" AutoGenerateColumns="False" CanUserSortColumns="False" BorderThickness="1" BorderBrush="{DynamicResource Accent}" >
+            <DataGrid.Columns >
+                <mui:DataGridTextColumn Header="Start"  Binding="{Binding StartFrame}"  Width="120" MinWidth="120" MaxWidth="120" />
+                <mui:DataGridTextColumn Header="End" Binding="{Binding EndFrame}"   Width="120" MinWidth="120" MaxWidth="120"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        <Grid Grid.Column="1" Margin="32,32,0,32" >
+            <TextBlock Text="{DynamicResource AviSynth_Tip_1}" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,32,0,0" TextWrapping="Wrap"/>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center" >
+                <Button x:Name="Insert" Content="{DynamicResource AviSynth_Button_4}"  Width="75" Click="Insert_Click" Margin="0,0,2,0"/>
+                <Button x:Name="Delete" Content="{DynamicResource AviSynth_Button_5}"  Width="75" Click="Delete_Click" Margin="2,0"/>
+                <Button x:Name="Clear" Content="{DynamicResource AviSynth_Button_6}"  Width="75" Click="Clear_Click" Margin="2,0,0,0" />
+            </StackPanel>
+            <!--<TextBlock Text="Transition style:" HorizontalAlignment="Center" VerticalAlignment="Bottom"  Margin="0,0,100,3" />
+            <ComboBox HorizontalAlignment="Center" VerticalAlignment="Bottom" Width="90" SelectedIndex="0" Margin="100,0,0,0">
+                <ComboBoxItem Content="No"/>
+                <ComboBoxItem Content="Fade"/>
+                <ComboBoxItem Content="Dissolve"/>
+            </ComboBox>-->
+            <Button Content="ff" VerticalAlignment="Bottom" HorizontalAlignment="Center" Click="Button_Click"/>
+        </Grid>
+
+
+    </Grid>
+</UserControl>

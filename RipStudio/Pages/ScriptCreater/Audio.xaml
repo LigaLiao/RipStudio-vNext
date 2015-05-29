@@ -1,0 +1,16 @@
+﻿<UserControl x:Class="RipStudio.Pages.ScriptCreater.Audio"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mui="http://firstfloorsoftware.com/ModernUI"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="300">
+    <Grid Style="{StaticResource ContentRoot}">
+        <mui:ModernTab SelectedSource="Pages/ScriptCreater/AudioContent/AudioMain.xaml"  Layout="Tab">
+            <mui:ModernTab.Links>
+                <mui:Link DisplayName="Main" Source="Pages/ScriptCreater/AudioContent/AudioMain.xaml"  />
+            </mui:ModernTab.Links>
+        </mui:ModernTab>
+    </Grid>
+</UserControl>

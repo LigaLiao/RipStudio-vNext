@@ -1,0 +1,21 @@
+﻿<?xml version='1.0' encoding='utf-8'?>
+<SettingsFile xmlns="http://schemas.microsoft.com/VisualStudio/2004/01/settings" CurrentProfile="(Default)" GeneratedClassNamespace="RipStudio.Properties" GeneratedClassName="Settings">
+  <Profiles />
+  <Settings>
+    <Setting Name="AccentColor" Type="System.Windows.Media.Color" Scope="User">
+      <Value Profile="(Default)">#FFA4C400</Value>
+    </Setting>
+    <Setting Name="Theme_Uri" Type="System.Uri" Scope="User">
+      <Value Profile="(Default)">/FirstFloor.ModernUI;component/Assets/ModernUI.Dark.xaml</Value>
+    </Setting>
+    <Setting Name="Language_DisplayName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">SimplifiedChinese</Value>
+    </Setting>
+    <Setting Name="Theme_DisplayName" Type="System.String" Scope="User">
+      <Value Profile="(Default)">Dark</Value>
+    </Setting>
+    <Setting Name="Language_Uri" Type="System.Uri" Scope="User">
+      <Value Profile="(Default)">/RipStudio;component/Language/SimplifiedChinese.xaml</Value>
+    </Setting>
+  </Settings>
+</SettingsFile>

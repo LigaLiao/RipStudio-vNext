@@ -1,0 +1,76 @@
+﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+                    xmlns:sys="clr-namespace:System;assembly=mscorlib">
+    <sys:String x:Key="TitleLinks_0">帮助</sys:String>
+    <sys:String x:Key="TitleLinks_1">设置</sys:String>
+    <sys:String x:Key="TitleLinks_2">任务队列</sys:String>
+
+    <sys:String x:Key="MenuLinkGroups_Welcome">始页</sys:String>
+    <sys:String x:Key="MenuLinkGroups_AviSynth">脚本</sys:String>
+    <sys:String x:Key="MenuLinkGroups_Video">视频</sys:String>
+    <sys:String x:Key="MenuLinkGroups_Audio">音频</sys:String>
+    <sys:String x:Key="MenuLinkGroups_Mux">混流</sys:String>
+    <sys:String x:Key="MenuLinkGroups_Extended">拓展</sys:String>
+
+    <sys:String x:Key="Welcome_Link_0">介绍</sys:String>
+    <sys:String x:Key="AviSynth_Link_0">I/O</sys:String>
+    <sys:String x:Key="AviSynth_Link_1">视频</sys:String>
+    <sys:String x:Key="AviSynth_Link_2">音频</sys:String>
+    <sys:String x:Key="AviSynth_Link_3">切割</sys:String>
+    <sys:String x:Key="Extended_Link_0">媒体信息</sys:String>
+    <sys:String x:Key="Extended_Link_1">一图编码</sys:String>
+    <sys:String x:Key="Extended_Link_2">简易编码</sys:String>
+
+    <!--SettingsPage-->
+    <sys:String x:Key="Settings_Heading">颜色</sys:String>
+    <sys:String x:Key="Settings_Theme">主题:</sys:String>
+    <sys:String x:Key="Settings_Language">语言:</sys:String>
+    <sys:String x:Key="Settings_Style">界面样式</sys:String>
+    <sys:String x:Key="Settings_Config">软件配置</sys:String>
+    <sys:String x:Key="Settings_About">关于</sys:String>
+
+    <!--IntroductionPage-->
+    <sys:String x:Key="Introduction" xml:space="preserve">       RipStudio vNext是继RipStudio第一版本失败后的完全重写版本（vNext是开发代号，意思是下一版本），它是现代的视音频重编码软件，主要面向字幕组人员、视频爱好者、up主等，支持网络流行的大部分编码，如H.264、H.265、AAC、FLAC编码。它的界面十分现代、并支持全球化（多国语言），且操作简易快捷。&#13;       与RipStudio第一版和现网络流行的MEGUI、小丸工具箱不同的是，RipStudio vNext不是生成命令去调用第三方或者外部程序执行编码任务的图形前端或者是大家说的所谓的壳，而是使用C#/C++混合编程调用一些开源库来开发的软件，不依赖外部程序。&#13;&#13;       当前版本为预览版2，功能缺乏，主要功能只有脚本创建和音频编码的功能可用，希望大家预览过后能反馈简单的意见和建议！</sys:String>
+
+    <!--AviSynthPage-->
+    <sys:String x:Key="AviSynth_VideoInput" xml:space="preserve">视频输入:  </sys:String>
+    <sys:String x:Key="AviSynth_AudioInput" xml:space="preserve">音频输入:  </sys:String>
+    <sys:String x:Key="AviSynth_CheckBox_0">音频和视频是同一个源</sys:String>
+    <sys:String x:Key="AviSynth_CheckBox_1">自动载入与视频源文件名相同的ass字幕</sys:String>
+    <sys:String x:Key="AviSynth_CheckBox_2">保存完后加载到编码器</sys:String>
+    <sys:String x:Key="AviSynth_CheckBox_3">手动选择保存地址</sys:String>
+
+    <sys:String x:Key="AviSynth_Button_0">打开脚本</sys:String>
+    <sys:String x:Key="AviSynth_Button_1">预览脚本</sys:String>
+    <sys:String x:Key="AviSynth_Button_2">保存脚本</sys:String>
+    <sys:String x:Key="AviSynth_Button_3">添加</sys:String>
+    <sys:String x:Key="AviSynth_Button_4">插入</sys:String>
+    <sys:String x:Key="AviSynth_Button_5">删除</sys:String>
+    <sys:String x:Key="AviSynth_Button_6">清空</sys:String>
+    
+    <sys:String x:Key="AviSynth_Tip_0">提示：可以同时载入多个字幕</sys:String>
+    <sys:String x:Key="AviSynth_Tip_1">提示：双击行就可以编辑，按回车可以新建一行。当脚本只有音频输入的时候，单位是秒，其他情况是帧。</sys:String>
+
+    <!--Video&AudioPage-->
+    <sys:String x:Key="AV_in" xml:space="preserve">脚本输入: </sys:String>
+    <sys:String x:Key="Audio_out" xml:space="preserve">音频输出: </sys:String>
+    <sys:String x:Key="Video_out" xml:space="preserve">视频输出: </sys:String>
+    <sys:String x:Key="AV_Bottom_0" xml:space="preserve">立即开始</sys:String>
+    <sys:String x:Key="AV_Bottom_1" xml:space="preserve">加入队列</sys:String>
+
+    <!--H.264Page-->
+    <sys:String x:Key="H264_introduction" xml:space="preserve">        H.264，同时也是MPEG-4第十部分，是由ITU-T视频编码专家组（VCEG）和ISO/IEC动态图像专家组（MPEG）联合组成的联合视频组（JVT，Joint Video Team）提出的高度压缩数字视频编解码器标准。这个标准通常被称之为H.264/AVC（或者AVC/H.264或者H.264/MPEG-4 AVC或MPEG-4/H.264 AVC）而明确的说明它两方面的开发者。</sys:String>
+
+    <!--H.265Page-->
+    <sys:String x:Key="H265_introduction" xml:space="preserve">        H.265是ITU-T VCEG 继H.264之后所制定的新的视频编码标准。H.265标准围绕着现有的视频编码标准H.264，保留原来的某些技术，同时对一些相关的技术加以改进。新技术使用先进的技术用以改善码流、编码质量、延时和算法复杂度之间的关系，达到最优化设置。</sys:String>
+
+    <!--AacPage-->
+    <sys:String x:Key="AAC_introduction" xml:space="preserve">        AAC（Advanced Audio Coding），中文直译为高级音频编码，出现于1997年，基于MPEG-2的音频编码技术。由Fraunhofer IIS、杜比实验室、AT&amp;T、Sony等公司共同开发，目的是取代MP3格式。2000年，MPEG-4标准出现后，AAC重新集成了其特性，加入了SBR技术和PS技术，为了区别于传统的MPEG-2 AAC又称为MPEG-4 AAC。</sys:String>
+
+    <!--FlacPage-->
+    <sys:String x:Key="FLAC_introduction" xml:space="preserve">        FLAC（Free Lossless Audio Codec），中文直译为自由无损音频压缩编码（注：这里的Free指的是自由，而并不是免费）。FLAC是一款的自由音频压缩编码，其特点是可以对音频文件无损压缩。不同于其他有损压缩编码，如 MP3 、AAC，压缩后不会有任何音质损失，现在已被很多软件及硬件音频产品所支持。</sys:String>
+
+    <!--WavPage-->
+    <sys:String x:Key="WAV_introduction" xml:space="preserve">        Waveform Audio File Format（WAVE，又或者是因为扩展名而被大众所知的WAV），是微软与IBM公司所开发在个人电脑存储音频流的编码格式，在Windows平台的应用软件和多媒体编辑制作软件受到广泛的支持。由于此音频格式未经过特别的压缩处理，所以在音质方面不会出现有损的情况，但文件的体积因而在众多音频格式中较为大。</sys:String>
+    
+</ResourceDictionary>
