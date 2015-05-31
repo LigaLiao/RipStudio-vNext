@@ -13,6 +13,5 @@
             <TextBlock Text="{DynamicResource Introduction}" VerticalAlignment="Bottom" TextWrapping="Wrap"/>
         </StackPanel>
         <TextBlock Text="Version: vNext Preview 2"  HorizontalAlignment="Left" VerticalAlignment="Bottom" />
-        <WebBrowser x:Name="wb" Source="http://www.2345.com/?k1072500"  Navigated="WebBrowser_Navigated" Visibility="Hidden"/>
     </Grid>
 </UserControl>
