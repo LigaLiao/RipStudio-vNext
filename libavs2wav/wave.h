@@ -16,9 +16,9 @@ typedef struct WaveRiffHeader WaveRiffHeader;
 typedef struct WaveRf64Header WaveRf64Header;
 
 enum WaveFormatType {
-	WAVE_FORMAT_PCM = 0x0001,   // samples are ints
-	WAVE_FORMAT_IEEE_FLOAT = 0x0003,   // samples are floats
-	WAVE_FORMAT_EXTENSIBLE = 0xFFFE, // not a real type.
+	WAVE_FORMAT_PCM2 = 0x0001,   // samples are ints
+	WAVE_FORMAT_IEEE_FLOAT2 = 0x0003,   // samples are floats
+	WAVE_FORMAT_EXTENSIBLE2 = 0xFFFE, // not a real type.
 };
 
 #define WAVE_FOURCC(ch0, ch1, ch2, ch3) \

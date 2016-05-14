@@ -15,7 +15,7 @@ using namespace System::Security::Permissions;
 [assembly:AssemblyConfigurationAttribute(L"")];
 [assembly:AssemblyCompanyAttribute(L"")];
 [assembly:AssemblyProductAttribute(L"libavs2x264")];
-[assembly:AssemblyCopyrightAttribute(L"Copyright (c)  2015")];
+[assembly:AssemblyCopyrightAttribute(L"Copyright (c) 2015 Liga Liao.")];
 [assembly:AssemblyTrademarkAttribute(L"")];
 [assembly:AssemblyCultureAttribute(L"")];
 
@@ -36,4 +36,4 @@ using namespace System::Security::Permissions;
 
 [assembly:CLSCompliantAttribute(true)];
 
-[assembly:AssemblyKeyFile("../RipStudio.snk")];
+//[assembly:AssemblyKeyFile("../RipStudio.snk")];

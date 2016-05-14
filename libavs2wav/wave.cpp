@@ -46,7 +46,7 @@ wave_create_riff_header(WaveFormatType format,
                         uint64_t       samples)
 {
 	WaveRiffHeader *header = (WaveRiffHeader *) malloc(sizeof(*header));
-    WaveGuid sub_format = {WAVE_FORMAT_PCM, 0x0000, 0x0010,
+    WaveGuid sub_format = {WAVE_FORMAT_PCM2, 0x0000, 0x0010,
                             {0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71} };
     uint32_t data_size, riff_size, fact_samples;
 
@@ -78,7 +78,7 @@ wave_create_riff_header(WaveFormatType format,
     header->format.header.id    = WAVE_FOURCC('f', 'm', 't', ' ');
     header->format.header.size  = sizeof(header->format) 
                                     - sizeof(header->format.header);
-    header->format.tag          = WAVE_FORMAT_EXTENSIBLE;
+    header->format.tag          = WAVE_FORMAT_EXTENSIBLE2;
     header->format.channels     = channels;
     header->format.sample_rate  = sample_rate;
     header->format.byte_rate    = channels * sample_rate * byte_depth;
@@ -108,7 +108,7 @@ wave_create_rf64_header(WaveFormatType format,
                         uint64_t       samples)
 {
 	WaveRf64Header *header = (WaveRf64Header *) malloc(sizeof(*header));
-    WaveGuid sub_format = {WAVE_FORMAT_PCM, 0x0000, 0x0010,
+    WaveGuid sub_format = {WAVE_FORMAT_PCM2, 0x0000, 0x0010,
                             {0x80, 0x00, 0x00, 0xaa, 0x00, 0x38, 0x9b, 0x71} };
 
     sub_format.d1 = format;
@@ -131,7 +131,7 @@ wave_create_rf64_header(WaveFormatType format,
     header->format.header.id    = WAVE_FOURCC('f', 'm', 't', ' ');
     header->format.header.size  = sizeof(header->format) 
                                     - sizeof(header->format.header);
-    header->format.tag          = WAVE_FORMAT_EXTENSIBLE;
+    header->format.tag          = WAVE_FORMAT_EXTENSIBLE2;
     header->format.channels     = channels;
     header->format.sample_rate  = sample_rate;
     header->format.byte_rate    = channels * sample_rate * byte_depth;

@@ -1,26 +1,38 @@
-// 这是主 DLL 文件。
-#include <Windows.h>
-#include <string>
-#include <fstream>
-#include "..\Avisynth\avisynth.h"
-#include "libavs2flac.h"
-#include "FLAC/metadata.h"
-#include "FLAC/stream_encoder.h"
-#include "share/compat.h"
-#pragma comment(lib, "..\\Avisynth\\avisynth.lib")
-#pragma comment(lib, "libFLAC.lib")
-using namespace libavs2flac;
-using namespace std;
-using namespace System;
-using namespace System::ComponentModel;
+//// 这是主 DLL 文件。
+//#include <Windows.h>
+//#include <string>
+//#include <fstream>
+//#include "..\Avisynth\avisynth.h"
+//
+//#include "FLAC/metadata.h"
+//#include "FLAC/stream_encoder.h"
+//#include "share/compat.h"
+//#pragma comment(lib, "..\\Avisynth\\avisynth.lib")
+//#pragma comment(lib, "libFLAC_dynamic.lib")
 
-FlacEncoder::FlacEncoder(String^ filename)
+#include "libavs2flac.h"
+using namespace libavs2flac;
+//using namespace std;
+//using namespace System;
+////using namespace System::IO;
+//using namespace System::ComponentModel;
+
+FlacEncoder::FlacEncoder(String^ script, bool isfile)
 {
 	m_sc = new AvisynthCPP;
-	const char* infile = (const char*) (void *) (System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi(filename));
-	try {
+	const char* Script = (const char*) (void *) (System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi(script));
+	try
+	{
+		AVSValue arg(Script);
 		m_sc->env = CreateScriptEnvironment(AVISYNTH_INTERFACE_VERSION);
-		m_sc->res = m_sc->env->Invoke("Import", AVSValue(infile));
+		if (isfile)
+		{
+			m_sc->res = m_sc->env->Invoke("Import", AVSValue(&arg, 1));
+		}
+		else
+		{
+			m_sc->res = m_sc->env->Invoke("Eval", AVSValue(&arg, 1));
+		}
 		if (!m_sc->res.IsClip())
 		{
 			m_sc->env->ThrowError("didn't return clip.");
@@ -31,6 +43,29 @@ FlacEncoder::FlacEncoder(String^ filename)
 		{
 			m_sc->env->ThrowError("No audio.");
 		}
+		else
+		{
+			//if (m_sc->vi.SampleType() != SAMPLE_INT16)
+			//{
+			//	m_sc->res = m_sc->env->Invoke("ConvertAudioTo16bit", AVSValue(&m_sc->res, 1));
+			//	m_sc->clip = m_sc->res.AsClip();
+			//	m_sc->vi = m_sc->clip->GetVideoInfo();
+			//} 
+			if (m_sc->vi.SampleType() != SAMPLE_INT8 || m_sc->vi.SampleType() != SAMPLE_INT16 || m_sc->vi.SampleType() != SAMPLE_INT24)
+			{
+				if (isfile)
+				{
+					m_sc->env->ThrowError("FLAC does not supports 32bit and float input.");
+				}
+				else
+				{
+					m_sc->res = m_sc->env->Invoke("ConvertAudioTo16bit", AVSValue(&m_sc->res, 1));
+					m_sc->clip = m_sc->res.AsClip();
+					m_sc->vi = m_sc->clip->GetVideoInfo();
+				}
+			}
+		}
+		
 	}
 	catch (AvisynthError err) {
 		string s(err.msg);
@@ -44,20 +79,13 @@ FlacEncoder::FlacEncoder(String^ filename)
 		throw gcnew System::Exception(str3);
 	}
 }
-void progress_callback(const FLAC__StreamEncoder *encoder, FLAC__uint64 bytes_written, FLAC__uint64 samples_written, unsigned frames_written, unsigned total_frames_estimate, void *client_data)
-{
-	(void) encoder, (void) client_data;
-
-	//fprintf(stderr, "wrote %" PRIu64 " bytes, %" PRIu64 "/%u samples, %u/%u frames\n", bytes_written, samples_written, total_samples, frames_written, total_frames_estimate);
-}
 String^ FlacEncoder::Start(String^ filename, BackgroundWorker^ bw, FlacEncoderConfig^ Config)
 {
-
-	std::fstream out;
-	size_t size = m_sc->vi.BytesPerChannelSample() * m_sc->vi.nchannels, count = m_sc->vi.audio_samples_per_second;
-	uint64_t  target = m_sc->vi.num_audio_samples;
+	//fstream out;
+	uint64_t size = m_sc->vi.BytesPerChannelSample() * m_sc->vi.nchannels, count = m_sc->vi.audio_samples_per_second;
+	uint64_t target = m_sc->vi.num_audio_samples;
 	uint64_t sc = count * size;
-	//char *buff = new char[sc];
+	array<double>^ myArray = gcnew array<double>(2);
 
 	FLAC__byte *buffer = new FLAC__byte[sc];
 	FLAC__int32 *pcm = new FLAC__int32[m_sc->vi.audio_samples_per_second*m_sc->vi.nchannels];
@@ -67,28 +95,30 @@ String^ FlacEncoder::Start(String^ filename, BackgroundWorker^ bw, FlacEncoderCo
 	FLAC__StreamMetadata *metadata[2];
 	FLAC__StreamMetadata_VorbisComment_Entry entry;
 
-	unsigned sample_rate = 0;
-	unsigned channels = 0;
-	unsigned bps = 0;
+	//unsigned sample_rate = 0;
+	//unsigned channels = 0;
+	//unsigned bps = 16;
 
-	switch (m_sc->vi.sample_type)
-	{
-	default:return  L"audio format unknown trying PCM."; break;
-	case SAMPLE_INT8:bps = 8; break;
-	case SAMPLE_INT16:bps = 16; break;
-	case SAMPLE_INT24:bps = 24; break;
-	case SAMPLE_INT32:bps = 32;
-	case SAMPLE_FLOAT:bps = 32; break;
-	}
+	//switch (m_sc->vi.sample_type)
+	//{
+	//default:return  L"audio format unknown trying PCM."; break;
+	//case SAMPLE_INT8:bps = 8; break;
+	//case SAMPLE_INT16:bps = 16; break;
+	////case SAMPLE_INT24:bps = 24; break;
+	////case SAMPLE_INT32:bps = 32; break;
+	////case SAMPLE_FLOAT:bps = 32; break;
+	//}
+	//return  bps.ToString();
 	/* allocate the encoder */
-	if ((encoder = FLAC__stream_encoder_new()) == NULL) {
+	if ((encoder = FLAC__stream_encoder_new()) == NULL) 
+	{
 		return L"ERROR: allocating encoder\n";
 	}
 
 	ok &= FLAC__stream_encoder_set_verify(encoder, true);
 	ok &= FLAC__stream_encoder_set_compression_level(encoder, Config->Levels);
 	ok &= FLAC__stream_encoder_set_channels(encoder, m_sc->vi.nchannels);
-	ok &= FLAC__stream_encoder_set_bits_per_sample(encoder, bps);
+	ok &= FLAC__stream_encoder_set_bits_per_sample(encoder, 16);
 	ok &= FLAC__stream_encoder_set_sample_rate(encoder, m_sc->vi.audio_samples_per_second);
 	ok &= FLAC__stream_encoder_set_total_samples_estimate(encoder, m_sc->vi.num_audio_samples);
 
@@ -117,73 +147,81 @@ String^ FlacEncoder::Start(String^ filename, BackgroundWorker^ bw, FlacEncoderCo
 		//FLAC__StreamEncoderProgressCallback WO ;
 		init_status = FLAC__stream_encoder_init_file(encoder, outfile,NULL, /*client_data=*/NULL);
 		if (init_status != FLAC__STREAM_ENCODER_INIT_STATUS_OK) {
-			return L"ERROR: initializing encoder." ;
-			//return	gcnew String(FLAC__StreamEncoderInitStatusString[init_status]);
+			//return L"ERROR: initializing encoder." ;
+			return	gcnew String(FLAC__StreamEncoderInitStatusString[init_status]);
 			//fprintf(stderr, "ERROR: in/*itializing encoder: %s\n", FLAC__StreamEncoderInitStatusString[init_status]);*/
 			ok = false;
 		}
 	}
-	/* read blocks of samples from WAVE file and feed to encoder */
-	for (uint64_t i = 0; i < target; i += count) {
-		if (!bw->CancellationPending)
-		{
-			if (target - i < count) count = (size_t) (target - i);
-			m_sc->clip->GetAudio(buffer, i, count, m_sc->env);
-			for (size_t i = 0; i < count*m_sc->vi.nchannels; i++) {
-				/* inefficient but simple and works on big- or little-endian machines */
-				pcm[i] = (FLAC__int32) (((FLAC__int16) (FLAC__int8) buffer[2 * i + 1] << 8) | (FLAC__int16) buffer[2 * i]);
-			}
-			/* feed samples to encoder */
-			ok = FLAC__stream_encoder_process_interleaved(encoder, pcm, count);
-			bw->ReportProgress((i * 100 / target));
-		}
-		else
-		{
-		    FLAC__stream_encoder_finish(encoder);
-
-			/* now that encoding is finished, the metadata can be freed */
-			FLAC__metadata_object_delete(metadata[0]);
-			FLAC__metadata_object_delete(metadata[1]);
-			FLAC__stream_encoder_delete(encoder);
-
-			//m_sc->res.~AVSValue();
-			//m_sc->clip.~PClip();
-			//m_sc->env->DeleteScriptEnvironment();
-			bw->ReportProgress(0);
-			int num = MultiByteToWideChar(0, 0, outfile, -1, NULL, 0);
-			wchar_t *wide = new wchar_t[num];
-			MultiByteToWideChar(0, 0, outfile, -1, wide, num);
-
-			if (DeleteFile(wide))
+	try
+	{
+		double start = GetTickCount();
+		/* read blocks of samples from WAVE file and feed to encoder */
+		for (uint64_t i = 0; i < target; i += count) {
+			if (!bw->CancellationPending)
 			{
-				return  L"已中止,并已删除未完成的文件";
+				if (target - i < count) count = (size_t) (target - i);
+				m_sc->clip->GetAudio(buffer, i, count, m_sc->env);
+				for (size_t i2 = 0; i2 < count*m_sc->vi.nchannels; i2++) 
+				{
+					/* inefficient but simple and works on big- or little-endian machines */
+					pcm[i2] = (FLAC__int32) (((FLAC__int16) (FLAC__int8) buffer[2 * i2 + 1] << 8) | (FLAC__int16) buffer[2 * i2]);
+				}
+				/* feed samples to encoder */
+				ok = FLAC__stream_encoder_process_interleaved(encoder, pcm, (unsigned int)count);
+
+				myArray[0] = ((float) i / (float) m_sc->vi.audio_samples_per_second) / ((GetTickCount() - start) / 1000);
+				myArray[1] = (target / m_sc->vi.audio_samples_per_second / myArray[0]);
+				bw->ReportProgress(((int)i * 100 / (int)target), myArray);
 			}
 			else
 			{
-				return  L"已中止,删除未完成的文件失败";
+				//out.flush();
+				//out.close();
+				if (metadata[0]){ FLAC__metadata_object_delete(metadata[0]); }
+				if (metadata[1]){ FLAC__metadata_object_delete(metadata[1]); }
+				if (encoder){ FLAC__stream_encoder_delete(encoder); }
+				if (m_sc){ delete m_sc; }
+
+				int num = MultiByteToWideChar(0, 0, outfile, -1, NULL, 0);
+				wchar_t *wide = new wchar_t[num];
+				MultiByteToWideChar(0, 0, outfile, -1, wide, num);
+				DeleteFile(wide);
+				return  L"Cancel";
 			}
 		}
-	}
-	ok &= FLAC__stream_encoder_finish(encoder);
+		ok &= FLAC__stream_encoder_finish(encoder);
 
-	/* now that encoding is finished, the metadata can be freed */
-	FLAC__metadata_object_delete(metadata[0]);
-	FLAC__metadata_object_delete(metadata[1]);
-	FLAC__stream_encoder_delete(encoder);
+		/* now that encoding is finished, the metadata can be freed */
+		//out.flush();
+		//out.close();
+		if (metadata[0]){ FLAC__metadata_object_delete(metadata[0]); }
+		if (metadata[1]){ FLAC__metadata_object_delete(metadata[1]); }
+		if (encoder){ FLAC__stream_encoder_delete(encoder); }
+		if (m_sc){ delete m_sc; }
 
 
+		return  L"END";
+  }
+  catch (System::Runtime::InteropServices::SEHException^)
+  {
+	  //out.flush();
+	  //out.close();
+	  if (metadata[0]){ FLAC__metadata_object_delete(metadata[0]); }
+	  if (metadata[1]){ FLAC__metadata_object_delete(metadata[1]); }
+	  if (encoder){ FLAC__stream_encoder_delete(encoder); }
+	  if (m_sc){ delete m_sc; }
+	  return "Source error,Avisynth cannot read!";
+  }
+  catch (exception err)
+  {
+	  //out.flush();
+	  //out.close();
+	  if (metadata[0]){ FLAC__metadata_object_delete(metadata[0]); }
+	  if (metadata[1]){ FLAC__metadata_object_delete(metadata[1]); }
+	  if (encoder){ FLAC__stream_encoder_delete(encoder); }
+	  if (m_sc){ delete m_sc; }
 
-	//m_sc->clip.~PClip();
-	//m_sc->res.~AVSValue();
-	//m_sc->env->DeleteScriptEnvironment();
-	//delete m_sc;
-	m_sc->clip->~IClip();
-	m_sc->clip.~PClip();
-	m_sc->res.~AVSValue();
-	m_sc->env->DeleteScriptEnvironment();
-
-	bw->ReportProgress(100);
-
-  return  L"完成";
-
+	  return  gcnew String(err.what());
+  }
 }

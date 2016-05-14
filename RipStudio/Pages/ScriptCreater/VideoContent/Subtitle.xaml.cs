@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -20,10 +21,13 @@ namespace RipStudio.Pages.ScriptCreater.VideoContent
     /// </summary>
     public partial class Subtitle : UserControl
     {
+        public ObservableCollection<Customer3> data;
         public Subtitle()
         {
             InitializeComponent();
             ((App)(Application.Current)).VideoSubtitle = this;
+            data = new ObservableCollection<Customer3>();
+            DG1.DataContext = data;
         }
 
         private void Add_Click(object sender, RoutedEventArgs e)
@@ -40,22 +44,29 @@ namespace RipStudio.Pages.ScriptCreater.VideoContent
                 // Open document
                 for (int i = 0; i < dlg.FileNames.Length; i++)
                 {
-                    TreeViewItem TVI = new TreeViewItem();
-                    TVI.Header= dlg.FileNames[i];
-                    SubList.Items.Add(TVI);
+                    data.Add(new Customer3(){File=dlg.FileNames[i]});
                 }
-                SubList.IsExpanded = true;
+                //SubList.IsExpanded = true;
             }
         }
 
         private void Delete_Click(object sender, RoutedEventArgs e)
         {
-            SubList.Items.Remove(SubListTV.SelectedItem);
+            //SubList.Items.Remove(SubListTV.SelectedItem);
+            if (DG1.SelectedItem != null)
+            {
+                try { data.Remove((Customer3)DG1.SelectedItem); }
+                catch { }
+            }
         }
 
         private void Clear_Click(object sender, RoutedEventArgs e)
         {
-            SubList.Items.Clear();
+            data.Clear();
+        }
+
+        private void DG1_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
         }
     }
 }

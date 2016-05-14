@@ -49,17 +49,14 @@ namespace RipStudio.Pages.ScriptCreater
             if(DG1.SelectedIndex>-1)
             {
              cutdata.Insert(DG1.SelectedIndex,new Customer());
-            
             }
-           
-            
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
-        {
+        //private void Button_Click(object sender, RoutedEventArgs e)
+        //{
 
-            ModernDialog.ShowMessage(Properties.Settings.Default.Language_Uri.ToString(), "RipStudio Message", MessageBoxButton.OK);
-            
-        }
+        //    //ModernDialog.ShowMessage(Properties.Settings.Default.Language_Uri.ToString(), "RipStudio Message", MessageBoxButton.OK);
+        //    Application.Current.Resources.MergedDictionaries.FirstOrDefault(d => d.Source.OriginalString.Contains("anguage")).Source = new Uri(@"/Language/English2.xaml", UriKind.Relative);
+        //}
     }
 }

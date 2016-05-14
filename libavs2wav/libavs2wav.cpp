@@ -1,22 +1,22 @@
-#include <Windows.h>
-#include <string>
-#include "wave.h"
-#include "..\Avisynth\avisynth.h"
 #include "libavs2wav.h"
-#include <fstream>
-#pragma comment(lib, "..\\Avisynth\\avisynth.lib")
 using namespace libavs2wav;
-using namespace std;
-using namespace System;
-//using namespace System::IO;
-using namespace System::ComponentModel;
-WavEncoder::WavEncoder(String^ filename)
+
+WavEncoder::WavEncoder(String^ script, bool isfile)
 {
 	m_sc = new AvisynthCPP;
-	const char* infile = (const char*) (void *) (System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi(filename));
-	try {
+	const char* Script = (const char*) (void *) (System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi(script));
+	try
+	{
+		AVSValue arg(Script);
 		m_sc->env = CreateScriptEnvironment(AVISYNTH_INTERFACE_VERSION);
-		m_sc->res = m_sc->env->Invoke("Import", AVSValue(infile));
+		if (isfile)
+		{
+			m_sc->res = m_sc->env->Invoke("Import", AVSValue(&arg, 1));
+		}
+		else
+		{
+			m_sc->res = m_sc->env->Invoke("Eval", AVSValue(&arg, 1));
+		}
 		if (!m_sc->res.IsClip())
 		{
 			m_sc->env->ThrowError("didn't return clip.");
@@ -49,8 +49,8 @@ String^ WavEncoder::Start(String^ filename, BackgroundWorker^ bw)
 	case SAMPLE_INT8:
 	case SAMPLE_INT16:
 	case SAMPLE_INT24:
-	case SAMPLE_INT32:format = WAVE_FORMAT_PCM; break;
-	case SAMPLE_FLOAT:format = WAVE_FORMAT_IEEE_FLOAT; break;
+	case SAMPLE_INT32:format = WAVE_FORMAT_PCM2; break;
+	case SAMPLE_FLOAT:format = WAVE_FORMAT_IEEE_FLOAT2; break;
 	default:
 		return  L"audio format unknown trying PCM.";
 	}
@@ -65,54 +65,64 @@ String^ WavEncoder::Start(String^ filename, BackgroundWorker^ bw)
 	out.write((char*) header, sizeof(*header));
 	out.flush();
 	delete header;
-	uint64_t lingshi = 0;
-	for (uint64_t i = 0; i < target; i += count)
-	{
-		if (!bw->CancellationPending)
-		{
-			if (target - i < count) count = (size_t) (target - i);
-			m_sc->clip->GetAudio(buff, i, count, m_sc->env);
-			out.write(buff, sc);
-			lingshi += count;
-			bw->ReportProgress((i * 100 / target));
-		}
-		else
-		{
-			out.flush();
-			out.close();
-			delete buff;
-			//m_sc->res.~AVSValue();
-			//m_sc->clip.~PClip();
-			//m_sc->env->DeleteScriptEnvironment();
-			bw->ReportProgress(0);
-			int num = MultiByteToWideChar(0, 0, outfile, -1, NULL, 0);
-			wchar_t *wide = new wchar_t[num];
-			MultiByteToWideChar(0, 0, outfile, -1, wide, num);
 
-			if (DeleteFile(wide))
+	try
+	{
+		double start = GetTickCount();
+		for (uint64_t i = 0; i < target; i += count)
+		{
+			if (!bw->CancellationPending)
 			{
-				return  L"已中止,并已删除未完成的文件";
+				if (target - i < count)
+				{
+					count = (size_t) (target - i);
+				}
+				m_sc->clip->GetAudio(buff, i, count, m_sc->env);
+				out.write(buff, sc);
+
+				array<double>^ myArray = gcnew array<double>(2);
+				myArray[0] = ((float) i / (float) m_sc->vi.audio_samples_per_second) / ((GetTickCount() - start) / 1000);
+				myArray[1] = (target / m_sc->vi.audio_samples_per_second / myArray[0]);
+				bw->ReportProgress(((int) i * 100 / (int) target), myArray);
 			}
 			else
 			{
-				return  L"已中止,删除未完成的文件失败";
+				out.flush();
+				out.close();
+				if (buff){delete buff;}
+				if (m_sc){ delete m_sc; }
+
+				int num = MultiByteToWideChar(0, 0, outfile, -1, NULL, 0);
+				wchar_t *wide = new wchar_t[num];
+				MultiByteToWideChar(0, 0, outfile, -1, wide, num);
+				DeleteFile(wide);
+				return  L"Cancel";
 			}
 		}
+		out.flush();
+		out.close();
+		if (buff){ delete buff; }
+		if (m_sc){ delete m_sc; }
+
+		return  L"END";
 	}
-	out.flush();
-	out.close();
-	delete buff;
+	catch (System::Runtime::InteropServices::SEHException^)
+	{
+		out.flush();
+		out.close();
+		if (buff){ delete buff; }
+		if (m_sc){ delete m_sc; }
 
-	//m_sc->clip.~PClip();
-	//m_sc->res.~AVSValue();
-	//m_sc->env->DeleteScriptEnvironment();
-	//delete m_sc;
-	m_sc->clip->~IClip();
-	m_sc->clip.~PClip();
-	m_sc->res.~AVSValue();
-	m_sc->env->DeleteScriptEnvironment();
+		return "Source error,Avisynth cannot read!";
+	}
+	catch (exception err)
+	{
+		out.flush();
+		out.close();
+		if (buff){ delete buff; }
+		if (m_sc){ delete m_sc; }
 
-	bw->ReportProgress(100);
-	return  L"已完成编码";
+		return  gcnew String(err.what());
+	}
 
 }

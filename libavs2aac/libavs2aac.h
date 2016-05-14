@@ -1,5 +1,14 @@
-#include "..\Avisynth\avisynth.h"
+#include <Windows.h>
+#include <string>
 #include <fstream>
+#include <stdint.h>
+#include "..\Avisynth\avisynth.h"
+#include "aacenc_lib.h"
+
+#pragma comment(lib, "..\\Avisynth\\Avisynth.lib")
+#pragma comment(lib, "libfdk-aac.lib")
+
+using namespace std;
 using namespace System;
 using namespace System::ComponentModel;
 
@@ -9,6 +18,15 @@ namespace libavs2aac
 	{
 	public:
 		AvisynthCPP(){};
+		~AvisynthCPP()
+		{
+			if (res.IsClip())
+			{
+				res.~AVSValue();
+				clip.~PClip();
+			}
+			if (env != NULL){ env->DeleteScriptEnvironment(); }
+		};
 		PClip clip;
 		IScriptEnvironment* env;
 		AVSValue res;
@@ -47,11 +65,10 @@ namespace libavs2aac
 	public ref class AacEncoder
 	{
 	public:
-		AacEncoder(System::String^ filename);
-		~AacEncoder(){ delete m_sc; }
+		AacEncoder(System::String^ script, bool isfile);
+		~AacEncoder(){ if (m_sc){ delete m_sc; } }
 		String^ Start(String^ filename, BackgroundWorker^ bw, AacEncoderConfig^ Config);
 	private:
-		bool State = false;
 		AvisynthCPP* m_sc;
 	};
 }

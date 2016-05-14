@@ -1,4 +1,5 @@
-﻿using FirstFloor.ModernUI.Windows.Controls;
+﻿using AvisynthWrapper;
+using FirstFloor.ModernUI.Windows.Controls;
 using libavs2flac;
 using System;
 using System.Collections.Generic;
@@ -29,22 +30,15 @@ namespace RipStudio.Pages.Audio
         }
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            if (In.Text != string.Empty || Out.Text != string.Empty)
+            if (File.Exists(In.Text) && !string.IsNullOrWhiteSpace(Out.Text))
             {
-                if (File.Exists(In.Text) || File.Exists(Out.Text))
-                {
-                    FlacEncoderConfig EC = new FlacEncoderConfig();
-                    EC.Levels = (int)levelsSlider.Value;
-                    ((App)(Application.Current)).LV.Items.Add(new JobItem(In.Text, Out.Text, EncodingType.FLAC, EC, Now.IsChecked == true ? false : true));
-                }
-                else
-                {
-                    ModernDialog.ShowMessage("输入输出有不存在项。", "RipStudio Message", MessageBoxButton.OK);
-                }
+                FlacEncoderConfig EC = new FlacEncoderConfig();
+                EC.Levels = (int)levelsSlider.Value;
+                ((App)(Application.Current)).LV.Items.Add(new JobItem(In.Text, Out.Text, EncodingType.FLAC, EC, Now.IsChecked == true ? false : true));
             }
             else
             {
-                ModernDialog.ShowMessage("输入输出有未指定项。", "RipStudio Message", MessageBoxButton.OK);
+                ModernDialog.ShowMessage("输入输出有不存在项。", "RipStudio Message", MessageBoxButton.OK);
             }
         }
 
@@ -61,17 +55,33 @@ namespace RipStudio.Pages.Audio
 
         private void In_PreviewDrop(object sender, DragEventArgs e)
         {
-            if (System.IO.Path.GetExtension(((System.Array)e.Data.GetData(DataFormats.FileDrop)).GetValue(0).ToString()) == ".avs")
+            if (e.Data.GetData(DataFormats.FileDrop) != null)
             {
-                (sender as TextBox).Text = ((System.Array)e.Data.GetData(DataFormats.FileDrop)).GetValue(0).ToString();
-                if (Out.Text == string.Empty)
+                if (System.IO.Path.GetExtension(((System.Array)e.Data.GetData(DataFormats.FileDrop)).GetValue(0).ToString()) == ".avs")
                 {
-                    Out.Text = System.IO.Path.GetDirectoryName(((System.Array)e.Data.GetData(DataFormats.FileDrop)).GetValue(0).ToString()) + @"\" + System.IO.Path.GetFileNameWithoutExtension(((System.Array)e.Data.GetData(DataFormats.FileDrop)).GetValue(0).ToString()) + ".flac";
+                    try
+                    {
+                        Avisynth avs = new Avisynth(((System.Array)e.Data.GetData(DataFormats.FileDrop)).GetValue(0).ToString(), true);
+                        ScriptInfo woc = avs.GetScriptInfo();
+                        if (woc.HasAudio == true)
+                        {
+                            (sender as TextBox).Text = ((System.Array)e.Data.GetData(DataFormats.FileDrop)).GetValue(0).ToString();
+                        }
+                        else
+                        {
+                            ModernDialog.ShowMessage("没有音频轨道！", "Avisynth Error", MessageBoxButton.OK);
+                        }
+                        avs.FreeAvisynth();
+                    }
+                    catch (Exception ex)
+                    {
+                        ModernDialog.ShowMessage(ex.Message, "Avisynth Error", MessageBoxButton.OK);
+                    }
                 }
-            }
-            else
-            {
-                ModernDialog.ShowMessage("拖入的不是所允许的文件。", "RipStudio Message", MessageBoxButton.OK);
+                else
+                {
+                    In.Text = ((System.Array)e.Data.GetData(DataFormats.FileDrop)).GetValue(0).ToString();
+                }
             }
         }
 
@@ -82,7 +92,7 @@ namespace RipStudio.Pages.Audio
             // Configure open file dialog box
             Microsoft.Win32.OpenFileDialog dlg = new Microsoft.Win32.OpenFileDialog();
             dlg.DefaultExt = ".avs"; // Default file extension
-            dlg.Filter = "AviSynth Script|*.avs"; // Filter files by extension
+            dlg.Filter = "AviSynth Script|*.avs|Audio File|*.*;";
 
             // Show open file dialog box
             Nullable<bool> result = dlg.ShowDialog();
@@ -91,7 +101,31 @@ namespace RipStudio.Pages.Audio
             if (result == true)
             {
                 // Open document
-                In.Text = dlg.FileName;
+                if (System.IO.Path.GetExtension(dlg.FileName).ToLower() == ".avs")
+                {
+                    try
+                    {
+                        Avisynth avs = new Avisynth(dlg.FileName, true);
+                        ScriptInfo woc = avs.GetScriptInfo();
+                        if (woc.HasAudio == true)
+                        {
+                            In.Text = dlg.FileName;
+                        }
+                        else
+                        {
+                            ModernDialog.ShowMessage("没有音频轨道！", "Avisynth Error", MessageBoxButton.OK);
+                        }
+                        avs.FreeAvisynth();
+                    }
+                    catch (Exception ex)
+                    {
+                        ModernDialog.ShowMessage(ex.Message, "Avisynth Error", MessageBoxButton.OK);
+                    }
+                }
+                else
+                {
+                    In.Text = dlg.FileName;
+                }
             }
         }
 
@@ -99,7 +133,7 @@ namespace RipStudio.Pages.Audio
         {
             // Configure save file dialog box
             Microsoft.Win32.SaveFileDialog dlg = new Microsoft.Win32.SaveFileDialog();
-            dlg.FileName = "Out"; // Default file name
+            dlg.FileName = System.IO.Path.GetDirectoryName(In.Text) + System.IO.Path.GetFileNameWithoutExtension(In.Text) + "_out.flac";// Default file name
             dlg.DefaultExt = ".flac"; // Default file extension
             dlg.Filter = "FreeLosslessAudioCodec AudioFormat|*.flac"; // Filter files by extension
 
@@ -117,6 +151,48 @@ namespace RipStudio.Pages.Audio
         private void levelsSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
             QualityLevel.Text = "Quality Level - " + ((int)e.NewValue).ToString();
+        }
+
+        private string lsAVS = string.Empty;
+        private void In_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (((App)(Application.Current)).APresetAVS != string.Empty)
+            {
+                if (((App)(Application.Current)).APresetAVS != lsAVS)
+                {
+                    In.Text = lsAVS = ((App)(Application.Current)).APresetAVS;
+                }
+            }
+        }
+
+        private void In_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            if (Out.Text == string.Empty)
+            {
+                if (File.Exists(In.Text))
+                {
+                    string s = @"\";
+                    int Star = 0;
+                    int Count = 0;
+                    while (Star != -1)
+                    {
+                        Star = In.Text.IndexOf(s, Star);
+                        if (Star != -1)
+                        {
+                            Count++;
+                            Star++;
+                        }
+                    }
+                    if (Count > 1)
+                    {
+                        Out.Text = System.IO.Path.GetDirectoryName(In.Text) + @"\" + System.IO.Path.GetFileNameWithoutExtension(In.Text) + "_encoded.flac";
+                    }
+                    else
+                    {
+                        Out.Text = System.IO.Path.GetDirectoryName(In.Text) + System.IO.Path.GetFileNameWithoutExtension(In.Text) + "_encoded.flac";
+                    }
+                }
+            }
         }
     }
 }

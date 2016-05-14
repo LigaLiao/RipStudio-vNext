@@ -36,4 +36,4 @@ using namespace System::Security::Permissions;
 
 [assembly:CLSCompliantAttribute(true)];
 
-[assembly:AssemblyKeyFile("../RipStudio.snk")];
+//[assembly:AssemblyKeyFile("../RipStudio.snk")];

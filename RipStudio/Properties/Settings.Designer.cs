@@ -25,7 +25,7 @@ namespace RipStudio.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("#FFA4C400")]
+        [global::System.Configuration.DefaultSettingValueAttribute("#FF6A00FF")]
         public global::System.Windows.Media.Color AccentColor {
             get {
                 return ((global::System.Windows.Media.Color)(this["AccentColor"]));
@@ -80,6 +80,41 @@ namespace RipStudio.Properties {
             }
             set {
                 this["Language_Uri"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("100")]
+        public int ThemeImg_Opacity {
+            get {
+                return ((int)(this["ThemeImg_Opacity"]));
+            }
+            set {
+                this["ThemeImg_Opacity"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        public global::System.Uri ThemeImg_Uri {
+            get {
+                return ((global::System.Uri)(this["ThemeImg_Uri"]));
+            }
+            set {
+                this["ThemeImg_Uri"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("No")]
+        public string ThemeImg_Name {
+            get {
+                return ((string)(this["ThemeImg_Name"]));
+            }
+            set {
+                this["ThemeImg_Name"] = value;
             }
         }
     }

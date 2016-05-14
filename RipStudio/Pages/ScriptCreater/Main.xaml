@@ -6,41 +6,48 @@
              xmlns:mui="http://firstfloorsoftware.com/ModernUI"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="700">
-    <Grid Style="{StaticResource ContentRoot}" Margin="0,16,16,16" >
-        <Grid VerticalAlignment="Top">
+    <Grid Style="{StaticResource ContentRoot}" Margin="0,16,16,16"  >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="auto"/>
                 <ColumnDefinition Width="*"/>
                 <ColumnDefinition Width="auto"/>
             </Grid.ColumnDefinitions>
-            <TextBlock Text="{DynamicResource AviSynth_VideoInput}"  Margin="0,1,0,0" />
-            <TextBox x:Name="VideoTB" Grid.Column="1" Text=""  PreviewDragEnter="VideoTB_PreviewDragEnter"   PreviewDrop="VideoTB_PreviewDrop" PreviewDragOver="VideoTB_PreviewDragOver" />
-            <Button x:Name="VideoB" Grid.Column="2" Content="..."  Padding="8,2" Click="VideoB_Click"  Margin="8,0,0,0"/>
+            <TextBlock Text="{DynamicResource AviSynth_VideoInput}"  Margin="0,2,0,4" VerticalAlignment="Top" HorizontalAlignment="Left" />
+            <TextBox x:Name="VideoTB" Grid.Column="1" Text=""  PreviewDragEnter="VideoTB_PreviewDragEnter"   PreviewDrop="VideoTB_PreviewDrop" PreviewDragOver="VideoTB_PreviewDragOver" VerticalAlignment="Center" Margin="4,0,0,4" TextChanged="VideoTB_TextChanged" />
+            <Button x:Name="VideoB" Grid.Column="2" Content="..."  Padding="8,2" Click="VideoB_Click"  Margin="4,0,0,4" VerticalAlignment="Center"/>
+
+            <TextBlock Text="{DynamicResource AviSynth_AudioInput}" Margin="0,2,0,4" VerticalAlignment="Top" Grid.Row="1" HorizontalAlignment="Left" />
+            <TextBox x:Name="AudioTB" Grid.Column="1" Text=""   VerticalAlignment="Center" Grid.Row="1" Margin="4,0,0,4" TextChanged="AudioTB_TextChanged" PreviewDragEnter="AudioTB_PreviewDragEnter" PreviewDragOver="AudioTB_PreviewDragOver" PreviewDrop="AudioTB_PreviewDrop"/>
+            <Button x:Name="AudioB" Grid.Column="2" Content="..." Padding="8,2" Click="AudioB_Click" Margin="4,0,0,4" VerticalAlignment="Center" Grid.Row="1"/>
+
+
+            <TextBlock Text="脚本输出:" Margin="0,2,0,4" VerticalAlignment="Top" Grid.Row="2" HorizontalAlignment="Left" />
+            <TextBox x:Name="OutputTB" Grid.Column="1" Text=""   VerticalAlignment="Center" Grid.Row="2" Margin="4,0,0,4"/>
+            <Button x:Name="OutputB" Grid.Column="2" Content="..." Padding="8,2"  Click="OutputB_Click" Margin="4,0,0,4" VerticalAlignment="Center" Grid.Row="2"/>
+
+
+            <CheckBox x:Name="AutoLoadSub" Content="{DynamicResource AviSynth_CheckBox_1}" ToolTip="如果有才会载入，如果勾选了没有字幕也没事"  IsChecked="True" Grid.ColumnSpan="2"  HorizontalAlignment="Left"  Grid.Row="3"/>
         </Grid>
-        <Grid VerticalAlignment="Top" Margin="0,52,0,0" >
-            <Grid.ColumnDefinitions>
-                <ColumnDefinition Width="auto"/>
-                <ColumnDefinition Width="*"/>
-                <ColumnDefinition Width="auto"/>
-            </Grid.ColumnDefinitions>
-            <TextBlock Text="{DynamicResource AviSynth_AudioInput}" Margin="0,2,0,0"  />
-            <TextBox x:Name="AudioTB" Grid.Column="1" Text=""  IsEnabled="False" />
-            <Button x:Name="AudioB" Grid.Column="2" Content="..." Padding="8,2" IsEnabled="False" Click="AudioB_Click" Margin="8,0,0,0"/>
-        </Grid>
-        <!--<TextBlock Text="{DynamicResource AviSynth_AudioInput}" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,52,0,0" />
-        <TextBox x:Name="AudioTB" Text="" VerticalAlignment="Top" Margin="60,50,40,0" IsEnabled="False" />
-        <Button x:Name="AudioB" Content="..." HorizontalAlignment="Right" VerticalAlignment="Top" Padding="8,2" Margin="0,50,0,0" IsEnabled="False" Click="AudioB_Click"/>-->
-        <StackPanel  HorizontalAlignment="Left" VerticalAlignment="Top"  Margin="0,100,0,0">
-            <CheckBox x:Name="IsSame" Content="{DynamicResource AviSynth_CheckBox_0}"  IsChecked="True" Checked="CheckBox_Checked" Unchecked="CheckBox_Unchecked"/>
-            <CheckBox x:Name="AutoLoadSub" Content="{DynamicResource AviSynth_CheckBox_1}" ToolTip="如果有才会载入，如果勾选了没有字幕也没事"  IsChecked="True"  />
+        <StackPanel  Grid.Row="1">
+            <TextBlock  TextWrapping="Wrap" Text="       AviSynth是由Ben Rudiak-Gould首创的一种功能强大的视频文件后期处理工具，能够提供各种方式来合并和滤镜处理影像文件。最独特的就是AviSynth并不是一个孤立的影像处理程序，而是在影像文件和编码程序之间担任中间人的角色。" Margin="0,16,0,0"/>
+            <TextBlock  TextWrapping="Wrap" Text="       这是一个生成脚本的简单实现，只有基本的功能，如果你需要更强大更复杂或更好的处理，你需要自己写脚本，相关教程可以百度搜索 'AviSynth教程'。 " Margin="0,16,0,0"/>
         </StackPanel>
-        <!--<TextBlock Text="PS:这个脚本创建功能是基本、简单的，如果不能满足你，推荐用AVSP,批量也请自己修改脚本" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,150,0,0"/>-->
-        <StackPanel VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="0,0,0,4" >
-            <CheckBox x:Name="IsSaveToVideoFolder" Content="{DynamicResource AviSynth_CheckBox_3}" ToolTip="勾选了保存脚本就不会出现保存地址的窗口" HorizontalAlignment="Left" VerticalAlignment="Bottom" />
-            <CheckBox x:Name="IsLoadingEncoder" Content="{DynamicResource AviSynth_CheckBox_2}" HorizontalAlignment="Left" VerticalAlignment="Bottom" Margin="0,0,0,4" />
-        </StackPanel>
-        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom">
-            <Button x:Name="OpenScript" Content="{DynamicResource AviSynth_Button_0}" Padding="8,2" />
+
+        <CheckBox x:Name="IsLoadingEncoder" Content="{DynamicResource AviSynth_CheckBox_2}" VerticalAlignment="Bottom" HorizontalAlignment="Left" Margin="0,0,0,4" Grid.Row="2" IsChecked="True"/>
+        <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Bottom" Grid.Row="2">
+            <Button x:Name="CheckScript" Content="{DynamicResource AviSynth_Button_0}" Padding="8,2" Click="CheckScript_Click" />
             <Button x:Name="PreviewScript" Content="{DynamicResource AviSynth_Button_1}"  Padding="8,2" Click="PreviewScript_Click" Margin="8,0"   />
             <Button x:Name="SaveScript" Content="{DynamicResource AviSynth_Button_2}" Padding="8,2" Click="SaveScript_Click"  />
         </StackPanel>

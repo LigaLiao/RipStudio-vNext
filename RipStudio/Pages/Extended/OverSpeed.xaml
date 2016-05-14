@@ -1,0 +1,197 @@
+﻿<UserControl x:Class="RipStudio.Pages.Extended.OverSpeed"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mui="http://firstfloorsoftware.com/ModernUI"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="600">
+    <Grid Style="{StaticResource ContentRoot}" Margin="0,16,16,16" >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            
+            <TextBlock Text="{DynamicResource AviSynth_VideoInput}"  Margin="0,2,0,4" VerticalAlignment="Center" />
+            <TextBox x:Name="VideoTB" Grid.Column="1" Text=""  PreviewDragEnter="VideoTB_PreviewDragEnter"   PreviewDrop="VideoTB_PreviewDrop" PreviewDragOver="VideoTB_PreviewDragOver" Margin="0,0,0,4" VerticalAlignment="Center" ToolTip="还可以载入图片哦！"/>
+            <Button x:Name="VideoB" Grid.Column="2" Content="..."  Padding="8,2" Click="VideoB_Click"  Margin="4,0,0,4" VerticalAlignment="Center"/>
+
+            <TextBlock Text="{DynamicResource AviSynth_AudioInput}"  Margin="0,2,0,4" Grid.Row="1" VerticalAlignment="Center"/>
+            <TextBox x:Name="AudioTB" Grid.Column="1" Text="" Grid.Row="1"  Margin="0,0,0,4" VerticalAlignment="Center" PreviewDragEnter="VideoTB_PreviewDragEnter"   PreviewDragOver="VideoTB_PreviewDragOver" PreviewDrop="AudioTB_PreviewDrop"/>
+            <Button x:Name="AudioB" Grid.Column="2" Content="..." Padding="8,2"  Click="AudioB_Click" Margin="4,0,0,4" Grid.Row="1" VerticalAlignment="Center"/>
+
+            <TextBlock Text="字幕输入:  "  Margin="0,2,0,4" Grid.Row="2" VerticalAlignment="Center" />
+            <TextBox x:Name="SubTB" Grid.Column="1" Text=""  Grid.Row="2" Margin="0,0,0,4" VerticalAlignment="Center" PreviewDragEnter="VideoTB_PreviewDragEnter"   PreviewDragOver="VideoTB_PreviewDragOver" PreviewDrop="SubTB_PreviewDrop"/>
+            <Button x:Name="SubB" Grid.Column="2" Content="..." Padding="8,2" Margin="4,0,0,4" Grid.Row="2" VerticalAlignment="Center" Click="SubB_Click"/>
+
+            <TextBlock Text="视频输出:  "  Margin="0,2,0,4" Grid.Row="3" VerticalAlignment="Center" />
+            <TextBox x:Name="OutTB" Grid.Column="1" Text=""  Grid.Row="3" VerticalAlignment="Center" Margin="0,0,0,4" />
+            <Button x:Name="OutB" Grid.Column="2" Content="..." Padding="8,2"  Margin="4,0,0,4" Grid.Row="3" VerticalAlignment="Center" Click="OutB_Click"/>
+        </Grid>
+        <!--<Grid VerticalAlignment="Top">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="{DynamicResource AviSynth_VideoInput}"  Margin="0,1,0,0" />
+            <TextBox x:Name="VideoTB" Grid.Column="1" Text=""  PreviewDragEnter="VideoTB_PreviewDragEnter"   PreviewDrop="VideoTB_PreviewDrop" PreviewDragOver="VideoTB_PreviewDragOver" />
+            <Button x:Name="VideoB" Grid.Column="2" Content="..."  Padding="8,2" Click="VideoB_Click"  Margin="4,0,0,0"/>
+        </Grid>-->
+        <!--<Grid VerticalAlignment="Top" Margin="0,30,0,0" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="{DynamicResource AviSynth_AudioInput}" Margin="0,2,0,0"  />
+            <TextBox x:Name="AudioTB" Grid.Column="1" Text=""   />
+            <Button x:Name="AudioB" Grid.Column="2" Content="..." Padding="8,2"  Click="AudioB_Click" Margin="4,0,0,0"/>
+        </Grid>-->
+        <!--<Grid VerticalAlignment="Top" Margin="0,60,0,0" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="字幕输入:  " Margin="0,2,0,0"  />
+            <TextBox x:Name="SubTB" Grid.Column="1" Text=""   />
+            <Button x:Name="SubB" Grid.Column="2" Content="..." Padding="8,2" Click="AudioB_Click" Margin="4,0,0,0"/>
+        </Grid>-->
+        <!--<Grid VerticalAlignment="Top" Margin="0,90,0,0" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <TextBlock Text="视频输出:  " Margin="0,2,0,0"  />
+            <TextBox x:Name="OutTB" Grid.Column="1" Text=""   />
+            <Button x:Name="OutB" Grid.Column="2" Content="..." Padding="8,2"  Click="AudioB_Click" Margin="4,0,0,0" Grid.Row="3"/>
+        </Grid>-->
+
+        <Grid Grid.Row="1" Margin="0,8" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="16"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="16"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="16"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="*"/>
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+            <TextBlock  Text="视频编码:" Margin="0,2,4,2"  Grid.Column="0" Grid.Row="0" VerticalAlignment="Center"/>
+            <ComboBox x:Name="VideoCodingCB"  Grid.Column="1" SelectedIndex="0" Grid.Row="0" Margin="0" VerticalAlignment="Center">
+                <ComboBoxItem Content="H.264"/>
+                <ComboBoxItem Content="H.265"/>
+            </ComboBox>
+            
+            <TextBlock  Text="视频码率:" Margin="0,2,4,2" VerticalAlignment="Center" Grid.Column="0"  Grid.Row="1" />
+            <TextBox x:Name="BitrateTB" Margin="0" Grid.Column="1" MinWidth="64" Text="2048" VerticalAlignment="Center"  Grid.Row="1" />
+
+            <!--<TextBlock  Text="CompressionRatio:" Margin="0,2,0,0" Grid.Row="2" VerticalAlignment="Center" Grid.Column="0"/>
+            <ComboBox x:Name="CompressionRatioCB"  Grid.Column="1" Grid.Row="2" SelectedIndex="5"  Margin="2,0,0,0" VerticalAlignment="Center">
+                <ComboBoxItem Content="0" />
+                <ComboBoxItem Content="1" />
+                <ComboBoxItem Content="2" />
+                <ComboBoxItem Content="3" />
+                <ComboBoxItem Content="4" />
+                <ComboBoxItem Content="5" />
+                <ComboBoxItem Content="6" />
+                <ComboBoxItem Content="7" />
+                <ComboBoxItem Content="8" />
+                <ComboBoxItem Content="9" />
+            </ComboBox>-->
+
+  
+            <TextBlock  Text="分辨率:" Margin="0,2,4,2" Grid.Row="0" VerticalAlignment="Center" Grid.Column="3"/>
+            <ComboBox x:Name="ResolutionCB"  Grid.Column="4" Grid.Row="0" SelectedIndex="0" VerticalAlignment="Center" IsEditable="True">
+                <ComboBoxItem Content="不变" />
+                <ComboBoxItem Content="854x480" />
+                <ComboBoxItem Content="1280x720" />
+                <ComboBoxItem Content="1920x1080" />
+                <ComboBoxItem Content="3840x2160" />
+            </ComboBox>
+
+            <TextBlock  Text="帧率:" Margin="0,2,4,2" Grid.Row="1" VerticalAlignment="Center" Grid.Column="3"/>
+            <ComboBox x:Name="FrameRate"  Grid.Column="4" Grid.Row="1" SelectedIndex="0"  VerticalAlignment="Center" IsEditable="True">
+                <ComboBoxItem Content="不变" />
+                <ComboBoxItem Content="10" />
+                <ComboBoxItem Content="20" />
+                <ComboBoxItem Content="23.976" />
+                <ComboBoxItem Content="24" />
+                <ComboBoxItem Content="25" />
+                <ComboBoxItem Content="29.97" />
+                <ComboBoxItem Content="30" />
+                <ComboBoxItem Content="60" />
+            </ComboBox>
+            
+            <CheckBox x:Name="_2pass" Content="二次编码视频" VerticalAlignment="Center" HorizontalAlignment="Left" Grid.Column="6" Grid.Row="1" Margin="2,0,0,0" Grid.ColumnSpan="2"/>
+
+            <TextBlock  Text="音频编码:" Margin="0,2,4,2"  Grid.Column="9" Grid.Row="0" VerticalAlignment="Center"/>
+            <ComboBox x:Name="AudioCodingCB"  Grid.Column="10" SelectedIndex="0" Grid.Row="0"  VerticalAlignment="Center" SelectionChanged="AudioCodingCB_SelectionChanged">
+                <ComboBoxItem Content="AAC"/>
+                <ComboBoxItem Content="WAV"/>
+            </ComboBox>
+
+            <TextBlock  x:Name="AudioBitrateTBTB" Text="音频码率:" Margin="0,2,4,2" VerticalAlignment="Center" Grid.Column="9" Grid.Row="1"/>
+            <TextBox x:Name="AudioBitrateTB"  Grid.Column="10" MinWidth="64" Text="128" Grid.Row="1" VerticalAlignment="Center"/>
+        </Grid>
+        <Grid  Height="auto" VerticalAlignment="Bottom" Grid.Row="2">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <!--<StackPanel Orientation="Horizontal" VerticalAlignment="Center">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock  Text="VideoCoding:" Margin="0,2,0,0" />
+                    <ComboBox x:Name="VideoCodingCB"  Grid.Column="1" SelectedIndex="0" HorizontalAlignment="Left" Margin="2,0,0,0">
+                        <ComboBoxItem Content="H.264"/>
+                        <ComboBoxItem Content="H.265"/>
+                    </ComboBox>
+                </Grid>-->
+                <!--<Grid Margin="4,0,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock  Text="AudioCoding:" Margin="0,2,0,0" />
+                    <ComboBox x:Name="AudioCodingCB"  Grid.Column="1" SelectedIndex="0" HorizontalAlignment="Left" Margin="2,0,0,0">
+                        <ComboBoxItem Content="AAC" />
+                        <ComboBoxItem  Content="FLAC"/>
+                    </ComboBox>
+                </Grid>-->
+            <!--</StackPanel>-->
+            <CheckBox x:Name="Now" Content="{DynamicResource AV_Bottom_0}" Grid.Column="0" HorizontalAlignment="Right" Padding="0,0,8,0" />
+            <Button Content="{DynamicResource AV_Bottom_1}" Grid.Column="1"  Click="Button_Click" Padding="8,2,8,3"/>
+        </Grid>
+    </Grid>
+</UserControl>

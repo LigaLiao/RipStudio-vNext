@@ -8,12 +8,13 @@
              d:DesignHeight="300" d:DesignWidth="600">
     <Grid Style="{StaticResource ContentRoot}" Margin="0,28,16,16">
         <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
-            <RowDefinition Height="0.25*"/>
-            <RowDefinition Height="0.25*"/>
-            <RowDefinition Height="0.25*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
-        <Grid  VerticalAlignment="Top">
+        <Grid  VerticalAlignment="Top" Visibility="Collapsed">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*"/>
                     <RowDefinition Height="*"/>
@@ -83,8 +84,6 @@
         </Grid>
         
 
-
-
         <StackPanel Orientation="Horizontal" Grid.Row="1" HorizontalAlignment="Center" VerticalAlignment="Center" >
             <CheckBox x:Name="黑白效果" Content="黑白效果" Margin="0"  />
             <CheckBox x:Name="显示视频信息" Content="显示视频信息" Margin="64,0"  />
@@ -95,9 +94,9 @@
 
         <StackPanel Orientation="Horizontal"  Grid.Row="2" HorizontalAlignment="Center" VerticalAlignment="Center" >
             <CheckBox  x:Name="淡入" Content="淡入" Margin="0,0,8,0" />
-            <TextBox x:Name="淡入帧"  Text="0" IsEnabled="{Binding ElementName=Is淡入, Path=IsChecked}" Margin="0,0,16,0" Width="64"/>
+            <TextBox x:Name="淡入帧"  Text="0" IsEnabled="{Binding ElementName=淡入, Path=IsChecked}" Margin="0,0,16,0" Width="64"/>
             <CheckBox  x:Name="淡出" Content="淡出" Margin="0,0,8,0" />
-            <TextBox x:Name="淡出帧"  Text="0" IsEnabled="{Binding ElementName=Is淡出, Path=IsChecked}" Width="64"/>
+            <TextBox x:Name="淡出帧"  Text="0" IsEnabled="{Binding ElementName=淡出, Path=IsChecked}" Width="64"/>
         </StackPanel>
 
 

@@ -7,25 +7,34 @@
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
     <Grid>
-        <ScrollViewer>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <StackPanel x:Name="Panel" MinWidth="150" >
+            <TextBlock Text="关于" Style="{StaticResource Heading2}" Margin="0,0,0,8" />
+            <TextBlock Text="RipStudio" Style="{StaticResource Heading2}" />
+            <TextBlock Text="版本：vNext Full version(2.0.2015.1005)" />
+        </StackPanel>
+
+        <ScrollViewer Grid.Row="1" Margin="0,0,0,4" >
             <Grid>
-                <StackPanel x:Name="Panel" MinWidth="150" >
-                    <TextBlock Text="关于" Style="{StaticResource Heading2}" Margin="0,0,0,8" />
-                    <TextBlock Text="RipStudio" Style="{StaticResource Heading2}" />
-                    <TextBlock Text="版本：vNext Preview 2(2.0.2015.0527)" />
-                    <mui:BBCodeBlock  BBCode="        [url=http://www.ripstudio.net/]RipStudio[/url]是个先进的视音频重编码软件，我觉得它很棒，但是这并不是我100%一人完成的，我使用了很多开源库来开发，以下是所使用的开源库列表，并在此致谢！&#x000A;" TextWrapping="Wrap" VerticalAlignment="Top" Height="65" Margin="0,8,0,0" />
+                <StackPanel  >
+                    <mui:BBCodeBlock  BBCode="        [url=http://www.ripstudio.net/]RipStudio vNext[/url]是一个非常特别的免费视音频重编码软件，他为现在的年轻人设计，以avisynth为核心开发，支持网络上主流的编码，如H.264、H.265、AAC、FLAC编码，全新的RipStudio拥有易用、简洁、美观的界面，并支持全球化（多国语言)。&#x000A;这个软件也是屏幕录制软件的OverSpeed的兄弟软件，有特别优化编码支持。&#x000A;&#x000A;        本软件始于我这个粤北山区穷屌的技术研究，并不盈利，未来也不会商业化，如果你喜欢这个软件，想支持这个软件的后续开发，你可以向我捐款，支付宝账号：lijia-liao@outlook.com（廖礼佳） &#x000A;&#x000A;本软件依赖以下开源库来开发，在此致谢开发者们！" TextWrapping="Wrap" VerticalAlignment="Top"  Margin="0,8,0,0" />
                     <mui:BBCodeBlock BBCode="· [url=https://github.com/firstfloorsoftware/mui/]Modern UI for WPF[/url]"  />
                     <mui:BBCodeBlock BBCode="· [url=http://sourceforge.net/projects/avisynth2/]AviSynth[/url]"/>
                     <mui:BBCodeBlock BBCode="· [url=http://www.videolan.org/developers/x264.html]libx264[/url]"  />
                     <mui:BBCodeBlock BBCode="· [url=http://www.videolan.org/developers/x265.html]libx265[/url]"  />
                     <mui:BBCodeBlock BBCode="· [url=http://sourceforge.net/p/opencore-amr/fdk-aac/ci/master/tree/l]libfdk-aac[/url]"  />
                     <mui:BBCodeBlock BBCode="· [url=https://xiph.org/flac/]libFLAC[/url]"  />
-                    <mui:BBCodeBlock BBCode="· [url=http://mediaarea.net/]MediaInfo[/url]"/>
+                    <mui:BBCodeBlock BBCode="· [url=http://www.mediaarea.net/]MediaInfo[/url]"/>
+                    <mui:BBCodeBlock BBCode=""/>
+                    <mui:BBCodeBlock BBCode="· [url=https://github.com/LigaLiao/RipStudio-vNext/]RipStudio vNext source code[/url]"/>
                 </StackPanel>
-         
             </Grid>
         </ScrollViewer>
-        
-        <TextBlock Text="Copyright © 2015 LigaLiao. All Rights Reserved." HorizontalAlignment="Right" VerticalAlignment="Bottom"/>
+        <TextBlock Text="Copyright © 2015 Liga Liao." HorizontalAlignment="Right" VerticalAlignment="Bottom" Margin="0,0,4,0" Grid.Row="2"/>
+        <!--<TextBlock Text="Copyright © 2015 Liga Liao." HorizontalAlignment="Right" VerticalAlignment="Bottom"/>-->
     </Grid>
 </UserControl>

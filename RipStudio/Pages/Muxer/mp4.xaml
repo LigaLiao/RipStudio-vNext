@@ -4,14 +4,93 @@
              xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:mui="http://firstfloorsoftware.com/ModernUI"
+             xmlns:my="clr-namespace:RipStudio.Pages.Muxer.Control"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
-    <Grid Style="{StaticResource ContentRoot}">
-        <ScrollViewer>
-            <StackPanel MinWidth="200">
-                <TextBlock Text="未开发" Style="{StaticResource Heading2}" />
-                <TextBlock Text="I need Help！" />
+             d:DesignHeight="300" d:DesignWidth="600">
+
+    <Grid Margin="0,16,16,16" >
+        <Grid.RowDefinitions>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <Grid Grid.Row="0">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+                <RowDefinition Height="auto"/>
+            </Grid.RowDefinitions>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="auto"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+
+            <TextBlock  Text="视频输入:" Margin="0,2,0,4" VerticalAlignment="Center"  />
+            <TextBox x:Name="VideoInput" Grid.Column="1" PreviewDragEnter="In_PreviewDragEnter" PreviewDragOver="In_PreviewDragOver" PreviewDrop="In_PreviewDrop0" Margin="4,0,0,4" VerticalAlignment="Center" TextChanged="VideoInput_TextChanged"/>
+            <Button  Grid.Column="2" Content="..." Padding="8,2,8,3" Click="InB_Click0" Margin="4,0,0,4" VerticalAlignment="Center"/>
+
+            <TextBlock  Text="音频输入:" Margin="0,2,0,4"  VerticalAlignment="Center"  Grid.Row="1"/>
+            <TextBox x:Name="AudioInput" Grid.Column="1" PreviewDragEnter="In_PreviewDragEnter" PreviewDragOver="In_PreviewDragOver" PreviewDrop="In_PreviewDrop1" Margin="4,0,0,4" VerticalAlignment="Center"  Grid.Row="1" />
+            <Button  Grid.Column="2" Content="..." Padding="8,2,8,3" Click="InB_Click1" Margin="4,0,0,4" VerticalAlignment="Center"  Grid.Row="1" />
+
+            <TextBlock  Text="字幕输入:" Margin="0,2,0,4" VerticalAlignment="Center"  Grid.Row="2" />
+            <TextBox x:Name="SubtitleInput" Grid.Column="1" PreviewDragEnter="In_PreviewDragEnter" PreviewDragOver="In_PreviewDragOver" PreviewDrop="In_PreviewDrop2" Margin="4,0,0,4" VerticalAlignment="Center"  Grid.Row="2"/>
+            <Button  Grid.Column="2" Content="..." Padding="8,2,8,3" Click="InB_Click2" Margin="4,0,0,4" VerticalAlignment="Center"  Grid.Row="2"/>
+
+            <TextBlock  Text="章节文件:" Margin="0,2,0,4" VerticalAlignment="Center"  Grid.Row="3" />
+            <TextBox x:Name="ChaptersFile" Grid.Column="1" PreviewDragEnter="In_PreviewDragEnter" PreviewDragOver="In_PreviewDragOver" PreviewDrop="In_PreviewDrop3" Margin="4,0,0,4" VerticalAlignment="Center"  Grid.Row="3"/>
+            <Button Grid.Column="2" Content="..." Padding="8,2,8,3" Click="InB_Click3" Margin="4,0,0,4" VerticalAlignment="Center"  Grid.Row="3"/>
+
+            <TextBlock  Text="{DynamicResource Video_out}" Margin="0,2,0,4" VerticalAlignment="Center"  Grid.Row="4"/>
+            <TextBox x:Name="VideoOutput" Grid.Column="1" Margin="4,0,0,4" VerticalAlignment="Center"  Grid.Row="4"/>
+            <Button  Grid.Column="2"  Content="..." Padding="8,2,8,3" Click="OutB_Click" Margin="4,0,0,4"  VerticalAlignment="Center"  Grid.Row="4"/>
+        </Grid>
+        <TextBlock Grid.Row="1" Text="       MP4是一套用于音频、视频信息的压缩编码标准，由国际标准化组织（ISO）和国际电工委员会（IEC）下属的动态图像专家组（Moving Picture Experts Group，即MPEG）制定，第一版在1998年10月通过，第二版在1999年12月通过。是网络最流行的封装格式。" TextWrapping="Wrap" Margin="0,8,0,0"/>
+
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="auto"/>
+            </Grid.ColumnDefinitions>
+            <StackPanel Orientation="Horizontal">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock  Text="设备类型:" Margin="0,2,4,0" />
+                    <ComboBox x:Name="DeviceTypeCB"  Grid.Column="1" SelectedIndex="0" HorizontalAlignment="Left" Margin="0">
+                        <ComboBoxItem Content="Standard"/>
+                        <ComboBoxItem Content="PSP"/>
+                        <ComboBoxItem Content="iPod"/>
+                        <ComboBoxItem Content="OtherAppleDevices"/>
+                    </ComboBox>
+                </Grid>
+                <Grid Margin="4,0,0,0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto"/>
+                        <ColumnDefinition Width="*"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBlock  Text="帧率:" Margin="0,2,4,0" />
+                    <ComboBox x:Name="FPS"  Grid.Column="1" IsEditable="True" SelectedIndex="0" HorizontalAlignment="Left" Margin="0">
+                        <ComboBoxItem Content="auto" />
+                        <ComboBoxItem  Content="23.976"/>
+                        <ComboBoxItem  Content="24"/>
+                        <ComboBoxItem  Content="25"/>
+                        <ComboBoxItem  Content="29.97"/>
+                        <ComboBoxItem  Content="30"/>
+                        <ComboBoxItem  Content="50"/>
+                        <ComboBoxItem  Content="59.94"/>
+                        <ComboBoxItem  Content="60"/>
+                    </ComboBox>
+                </Grid>
             </StackPanel>
-        </ScrollViewer>
+            <CheckBox x:Name="Now" Content="{DynamicResource AV_Bottom_0}" Grid.Column="0" HorizontalAlignment="Right" Padding="0,0,8,0" />
+            <Button Content="{DynamicResource AV_Bottom_1}" Grid.Column="1"  Click="Button_Click" Padding="8,2,8,3"/>
+        </Grid>
     </Grid>
 </UserControl>

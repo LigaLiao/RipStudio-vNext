@@ -24,5 +24,6 @@ namespace RipStudio.Pages.Video
         {
             InitializeComponent();
         }
+
     }
 }

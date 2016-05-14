@@ -1,26 +1,22 @@
-#include <Windows.h>
-#include <string>
-#include <stdint.h>
-#include <fstream>
 #include "libavs2x264.h"
-#include "..\Avisynth\avisynth.h"
-extern "C"
-{
-#include "x264.h"
-};
-#pragma comment(lib, "..\\Avisynth\\avisynth.lib")
-#pragma comment(lib, "libx264.lib")
 using namespace libavs2x264;
-using namespace std;
-using namespace System;
-using namespace System::ComponentModel;
-X264Encoder::X264Encoder(String^ filename)
+
+X264Encoder::X264Encoder(String^ script, bool isfile)
 {
 	m_sc = new AvisynthCPP;
-	const char* infile = (const char*) (void *) (System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi(filename));
-	try {
+	const char* Script = (const char*) (void *) (System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi(script));
+	try
+	{
+		AVSValue arg(Script);
 		m_sc->env = CreateScriptEnvironment(AVISYNTH_INTERFACE_VERSION);
-		m_sc->res = m_sc->env->Invoke("Import", AVSValue(infile));
+		if (isfile)
+		{
+			m_sc->res = m_sc->env->Invoke("Import", AVSValue(&arg, 1));
+		}
+		else
+		{
+			m_sc->res = m_sc->env->Invoke("Eval", AVSValue(&arg, 1));
+		}
 		if (!m_sc->res.IsClip())
 		{
 			m_sc->env->ThrowError("didn't return clip.");
@@ -30,6 +26,25 @@ X264Encoder::X264Encoder(String^ filename)
 		if (!m_sc->vi.HasVideo())
 		{
 			m_sc->env->ThrowError("No Video.");
+		}
+		else
+		{
+			if (!m_sc->vi.IsYV12() && !m_sc->vi.IsYV16() && !m_sc->vi.IsYV24())
+			{
+				if (!m_sc->vi.IsRGB())
+				{
+					m_sc->res = m_sc->env->Invoke("ConvertToYV12", AVSValue(&m_sc->res, 1));
+					m_sc->clip = m_sc->res.AsClip();
+					m_sc->vi = m_sc->clip->GetVideoInfo();
+				}
+				else
+				{
+					m_sc->res = m_sc->env->Invoke("FlipVertical", AVSValue(&m_sc->res, 1));
+					m_sc->clip = m_sc->res.AsClip();
+					m_sc->vi = m_sc->clip->GetVideoInfo();
+				}
+			}
+
 		}
 	}
 	catch (AvisynthError err) {
@@ -45,99 +60,354 @@ X264Encoder::X264Encoder(String^ filename)
 	}
 }
 
-String^ X264Encoder::Start(String^ filename, BackgroundWorker^ bw)
+String^ X264Encoder::Start(String^ filename, BackgroundWorker^ bw, String^ config)
 {
 	const char* outfile = (const char*) (void *) (System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi(filename));
 	std::fstream OutFile;
 	OutFile.open(outfile, std::fstream::binary | std::fstream::out);
 
+	array<double>^ myArray = gcnew array<double>(3);
+	uint64_t outframenum = 0;
+	uint32_t outFrameCount = 0;
+	uint64_t totalbytes = 0;
+
 	x264_param_t param;
-	x264_picture_t pic;
-	x264_picture_t pic_out;
-	x264_t *h;
+	x264_picture_t *pic_in = new x264_picture_t();
+	x264_picture_t *pic_out = new x264_picture_t();;
+	x264_t *h = NULL;
 	int i_frame_size;
-	x264_nal_t *nal;
+	x264_nal_t *nal = NULL;
 	int i_nal;
-	try 
+
+	char* preset = NULL;
+	char* tune = NULL;
+	char* profile = "high";
+	//应用设置
+
+	array<String^>^ ConfigArray = gcnew array<String^>(48);
+	array<String^>^ Config = gcnew array<String^>(2);
+	array<String^>^ SplitString = gcnew array<String^>(1);
+	SplitString[0] = "--";
+
+	try
 	{
-	if (x264_param_default_preset(&param, "medium", NULL) < 0){ exit(1); }
-
-	// Configure non-default params
-	param.i_csp = X264_CSP_I420;
-	param.i_width = m_sc->vi.width;
-	param.i_height = m_sc->vi.height;
-	param.b_vfr_input = 0;
-	param.b_repeat_headers = 1;
-	param.b_annexb = 1;
-	param.i_fps_num = m_sc->vi.fps_numerator;
-	param.i_fps_den = m_sc->vi.fps_denominator;
-
-	//Apply profile restrictions.
-	if (x264_param_apply_profile(&param, "high") < 0){ exit(2); }
-	if (x264_picture_alloc(&pic, param.i_csp, param.i_width, param.i_height) < 0){ exit(3); }
-
-	if (x264_encoder_open(&param)==NULL)
-	{
-		return L"Open The Encoder Failure!";
-	} 
-
-	pic.img.plane[0] = (uint8_t *) malloc(param.i_width*param.i_height * 3 / 2);
-	pic.img.plane[1] = pic.img.plane[0] + param.i_width * param.i_height;
-	pic.img.plane[2] = pic.img.plane[1] + param.i_width * param.i_height / 4;
-
-	for (uint64_t i_frame = 0; i_frame <m_sc->vi.num_frames; i_frame++)
-	{
-		/* Read input frame */
-		PVideoFrame f = m_sc->clip->GetFrame(i_frame, m_sc->env);
-		pic.img.plane[0] = (uint8_t *) f->GetReadPtr(PLANAR_Y);
-		pic.img.plane[1] = (uint8_t *) f->GetReadPtr(PLANAR_U);
-		pic.img.plane[2] = (uint8_t *) f->GetReadPtr(PLANAR_V);
-
-		pic.i_pts = i_frame;
-		i_frame_size = x264_encoder_encode(h, &nal, &i_nal, &pic, &pic_out);
-		if (i_frame_size < 0)
+		ConfigArray = config->Split(SplitString, StringSplitOptions::RemoveEmptyEntries);
+		for each (String^ var in ConfigArray)
 		{
-			return  L"编码中途失败";
+			if (!String::IsNullOrWhiteSpace(var))
+			{
+				Config = var->Split(' ');
+				if (Config[0]->ToLower() == "preset")
+				{
+					preset = (char*) (void *) (Marshal::StringToHGlobalAnsi(Config[1]->Replace(" ", "")->ToLower()));
+				}
+				else if (Config[0]->ToLower() == "tune")
+				{
+					tune = (char*) (void *) (Marshal::StringToHGlobalAnsi(Config[1]->Replace(" ", "")->ToLower()));
+				}
+				else if (Config[0]->ToLower() == "profile")
+				{
+					profile = (char*) (void *) (Marshal::StringToHGlobalAnsi(Config[1]->Replace(" ", "")->ToLower()));
+				}
+				//else if (Config[0]->ToLower() == "qpfile")
+				//{
+				//	qpfile = fopen((const char*) (void *) (Marshal::StringToHGlobalAnsi(Config[1]->Replace(" ", "")->ToLower())),"rb");
+				//}
+			}
+			Config[0] = Config[1] = "";
 		}
-		else if (i_frame_size)
+
+
+		if (x264_param_default_preset(&param, preset, tune) < 0){ return L"Apply Preset Failure!"; }
+
+
+
+		// Configure non-default params
+		if (m_sc->vi.IsYV12())
 		{
-			OutFile.write((const char*) nal->p_payload, i_frame_size);
+			param.i_csp = X264_CSP_I420;
 		}
-		bw->ReportProgress((i_frame * 100 / m_sc->vi.num_frames));
+		else if (m_sc->vi.IsYV16())
+		{
+			param.i_csp = X264_CSP_I422;
+			profile = "high422";
+		}
+		else if (m_sc->vi.IsYV24())
+		{
+			param.i_csp = X264_CSP_I444;
+			profile = "high444";
+		}
+		else if (m_sc->vi.IsRGB24())
+		{
+			param.i_csp = X264_CSP_BGR;
+			profile = "high444";
+		}
+		else if (m_sc->vi.IsRGB32())
+		{
+			param.i_csp = X264_CSP_BGRA;
+			profile = "high444";
+		}
+
+		param.i_width = m_sc->vi.width;
+		param.i_height = m_sc->vi.height;
+		param.b_vfr_input = 0;
+		param.b_repeat_headers = 1;
+		param.b_annexb = 1;
+		param.i_fps_num = m_sc->vi.fps_numerator;
+		param.i_fps_den = m_sc->vi.fps_denominator;
+		param.i_frame_total = m_sc->vi.num_frames;
+		param.b_opencl = 1;
+
+		for each (String^ var in ConfigArray)
+		{
+			if (!String::IsNullOrWhiteSpace(var))
+			{
+				Config = var->Split(' ');
+				if (Config[0]->ToLower() == "preset")
+				{
+				}
+				else if (Config[0]->ToLower() == "tune")
+				{
+				}
+				else if (Config[0]->ToLower() == "profile")
+				{
+				}
+				else if (Config[0]->ToLower() == "qpfile")
+				{
+				}
+				else
+				{
+					switch (x264_param_parse(&param, (const char*) (void *) (Marshal::StringToHGlobalAnsi(Config[0]->ToLower())), (const char*) (void *) (Marshal::StringToHGlobalAnsi(Config[1]->ToLower()))))
+					{
+					case X264_PARAM_BAD_NAME:
+						OutFile.close();
+						if (m_sc){ delete m_sc; }
+						return  L"BAD_NAME:" + Config[0] + " " + Config[1];
+						break;
+					case X264_PARAM_BAD_VALUE:
+						OutFile.close();
+						if (m_sc){ delete m_sc; }
+						return  L"BAD_VALUE:" + Config[0] + " " + Config[1];
+						break;
+					}
+				}
+			}
+		}
+
+		//Apply profile restrictions.
+
+		if (x264_param_apply_profile(&param, profile) < 0){ return L"Apply Profile Failure!"; }
+
+
+
+		if (param.rc.b_stat_write == 1)
+		{
+			x264_param_apply_fastfirstpass(&param);
+		}
+
+		//x264_picture_init(pic_in);
+		//x264_picture_init(&pic_out);
+		if (x264_picture_alloc(pic_in, param.i_csp, param.i_width, param.i_height) < 0){ return L"Picture Alloc Failure!"; }
+		//if (x264_picture_alloc(&pic_out, param.i_csp, param.i_width, param.i_height) < 0){ return L"Picture Alloc Failure!"; }
+
+		//x264_picture_init(&pic_in);
+		h = x264_encoder_open(&param);
+		if (h == NULL){ return L"Open The Encoder Failure!"; }
+		x264_encoder_parameters(h, &param);
+		if (!param.b_repeat_headers)
+		{
+			//x264_nal_t *headers;
+			//int headers_nal;
+			if (x264_encoder_headers(h, &nal, &i_nal))
+			{
+				OutFile.write((const char*) nal[0].p_payload, nal[0].i_payload + nal[1].i_payload + nal[2].i_payload);
+			}
+			else
+			{
+				return L"x264_encoder_headers failed.";
+			}
+		}
+		//return L"准备过程没有出错";
+		double start = GetTickCount();
+		for (int i_frame = 0; i_frame < param.i_frame_total; i_frame++)
+		{
+			if (!bw->CancellationPending)
+			{
+				/* Read input frame */	
+				PVideoFrame f = m_sc->clip->GetFrame(i_frame, m_sc->env);
+				
+				pic_in->img.plane[0] = (uint8_t *) f->GetReadPtr(PLANAR_Y);
+				pic_in->img.plane[1] = (uint8_t *) f->GetReadPtr(PLANAR_U);
+				pic_in->img.plane[2] = (uint8_t *) f->GetReadPtr(PLANAR_V);
+				pic_in->img.i_stride[0] = f->GetPitch(PLANAR_Y);
+				pic_in->img.i_stride[1] = f->GetPitch(PLANAR_U);
+				pic_in->img.i_stride[2] = f->GetPitch(PLANAR_V);
+				pic_in->i_pts = i_frame;
+
+				i_frame_size = x264_encoder_encode(h, &nal, &i_nal, pic_in, pic_out);
+				
+				if (i_frame_size < 0)
+				{
+					OutFile.flush();
+					OutFile.close();
+					if (h){x264_encoder_close(h);}
+					if (m_sc){delete m_sc;}
+
+					if (pic_in)
+					{
+						delete pic_in;
+					}
+					if (pic_out)
+					{
+						delete pic_out;
+					}
+
+					int num = MultiByteToWideChar(0, 0, outfile, -1, NULL, 0);
+					wchar_t *wide = new wchar_t[num];
+					MultiByteToWideChar(0, 0, outfile, -1, wide, num);
+					DeleteFile(wide);
+					return  L"x264_encoder_encode failed";
+				}
+				else if (i_frame_size)
+				{
+					OutFile.write((const char*) nal->p_payload, i_frame_size);
+					outFrameCount++;
+				}
+				totalbytes += i_frame_size;
+
+				myArray[0] = (double) outFrameCount / ((GetTickCount() - start) / 1000.00);
+				myArray[1] = ((double) param.i_frame_total - (double) outFrameCount) / myArray[0];
+				myArray[2] = 0.008f * totalbytes * ((float) param.i_fps_num / (float) param.i_fps_den) / ((float) outFrameCount);
+				bw->ReportProgress((int)(outFrameCount * 100 / param.i_frame_total), myArray);
+				
+			}
+			else
+			{
+				OutFile.flush();
+				OutFile.close();
+				if (h){ x264_encoder_close(h); }
+				if (m_sc){ delete m_sc; }
+				if (pic_in)
+				{
+					delete pic_in;
+				}
+				if (pic_out)
+				{
+					delete pic_out;
+				}
+				int num = MultiByteToWideChar(0, 0, outfile, -1, NULL, 0);
+				wchar_t *wide = new wchar_t[num];
+				MultiByteToWideChar(0, 0, outfile, -1, wide, num);
+				DeleteFile(wide);
+				return  L"Cancel";
+			}
+		}
+		while (x264_encoder_delayed_frames(h))
+		{
+			if (!bw->CancellationPending)
+			{
+				i_frame_size = x264_encoder_encode(h, &nal, &i_nal, NULL, pic_out);
+				if (i_frame_size < 0)
+				{
+					OutFile.flush();
+					OutFile.close();
+					if (h){ x264_encoder_close(h); }
+					if (m_sc){ delete m_sc; }
+					if (pic_in)
+					{
+						delete pic_in;
+					}
+					if (pic_out)
+					{
+						delete pic_out;
+					}
+					int num = MultiByteToWideChar(0, 0, outfile, -1, NULL, 0);
+					wchar_t *wide = new wchar_t[num];
+					MultiByteToWideChar(0, 0, outfile, -1, wide, num);
+					DeleteFile(wide);
+					return  L"x264_encoder_encode failed";
+				}
+				else if (i_frame_size)
+				{
+					OutFile.write((const char*) nal->p_payload, i_frame_size);
+					outFrameCount++;
+				}
+				totalbytes += i_frame_size;
+				myArray[0] = (double) outFrameCount / ((GetTickCount() - start) / 1000);
+				myArray[1] = ((double) param.i_frame_total - (double) outFrameCount) / myArray[0];
+				myArray[2] = 0.008f * totalbytes * (param.i_fps_num / param.i_fps_den) / ((float) outFrameCount);
+				bw->ReportProgress((int)( outFrameCount * 100 /  param.i_frame_total), myArray);
+			}
+			else
+			{
+				OutFile.flush();
+				OutFile.close();
+				if (h){ x264_encoder_close(h); }
+				if (m_sc){ delete m_sc; }
+				if (pic_in)
+				{
+					delete pic_in;
+				}
+				if (pic_out)
+				{
+					delete pic_out;
+				}
+				int num = MultiByteToWideChar(0, 0, outfile, -1, NULL, 0);
+				wchar_t *wide = new wchar_t[num];
+				MultiByteToWideChar(0, 0, outfile, -1, wide, num);
+				DeleteFile(wide);
+				return  L"Cancel";
+			}
+		}
+		OutFile.flush();
+		OutFile.close();
+		if (pic_in)
+		{
+			delete pic_in;
+		}
+		if (pic_out)
+		{
+			delete pic_out;
+		}
+		if (h){ x264_encoder_close(h); }
+		if (m_sc){ delete m_sc; }
 	}
-	while (x264_encoder_delayed_frames(h))
+	catch (AvisynthError err)
 	{
-		i_frame_size = x264_encoder_encode(h, &nal, &i_nal, NULL, &pic_out);
-		if (i_frame_size < 0)
+		OutFile.flush();
+		OutFile.close();
+		if (pic_in)
 		{
-			exit(5);
+			delete pic_in;
 		}
-		else if (i_frame_size)
+		if (pic_out)
 		{
-			OutFile.write((const char*) nal->p_payload, i_frame_size);
+			delete pic_out;
 		}
-		//printf("Flush 1 帧\n");
+		if (h){ x264_encoder_close(h); }
+		if (m_sc){ delete m_sc; }
+
+		return  gcnew String(err.msg);
 	}
-	x264_encoder_close(h);
-	OutFile.flush();
-	OutFile.close();
-
-
-
-	//m_sc->clip.~PClip();
-	//m_sc->res.~AVSValue();
-	//m_sc->env->DeleteScriptEnvironment();
-	//delete m_sc;
-	m_sc->clip->~IClip();
-	m_sc->clip.~PClip();
-	m_sc->res.~AVSValue();
-	m_sc->env->DeleteScriptEnvironment();
-}
-catch (AvisynthError err) {
-	//fprintf(stderr, "\nAvisynth error:\n%s\n", err.msg);
-	return  gcnew String(err.msg);
-}
-	bw->ReportProgress(100);
-	return  L"已完成编码";
-
+	catch (exception err)
+	{
+		OutFile.flush();
+		OutFile.close();
+		if (pic_in)
+		{
+			delete pic_in;
+		}
+		if (pic_out)
+		{
+			delete pic_out;
+		}
+		if (h){ x264_encoder_close(h); }
+		if (m_sc){ delete m_sc; }
+		return  gcnew String(err.what());
+	}
+	catch (Exception^ e)
+	{
+		return  e->Source +":" +e->Message;
+	}
+	return  L"END";
 }

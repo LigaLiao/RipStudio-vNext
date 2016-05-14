@@ -5,7 +5,7 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:mui="http://firstfloorsoftware.com/ModernUI"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="300" d:DesignWidth="600">
     <Grid>
         <ScrollViewer>
             <StackPanel x:Name="Panel" MinWidth="150">
@@ -30,16 +30,20 @@
                     </ListBox.ItemTemplate>
                 </ListBox>
 
-                <Grid HorizontalAlignment="Left">
+                <Grid >
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="Auto" />
-                        <ColumnDefinition MinWidth="120"/>
-                        <ColumnDefinition MinWidth="120"/>
+                        <ColumnDefinition MinWidth="120" Width="auto"/>
+                        <!--<ColumnDefinition MinWidth="120" MaxWidth="240"/>-->
+                        <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
                     <Grid.RowDefinitions>
                         <RowDefinition />
                         <RowDefinition />
                         <RowDefinition />
+                        <RowDefinition />
+                        <RowDefinition />
+                        <!--<RowDefinition />-->
                     </Grid.RowDefinitions>
 
                     <!--<TextBlock Text="调色板:" VerticalAlignment="Center" Margin="0,0,16,4" />
@@ -49,9 +53,15 @@
                     <ComboBox Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Themes}" SelectedItem="{Binding SelectedTheme, Mode=TwoWay}" DisplayMemberPath="DisplayName" VerticalAlignment="Center" Margin="0,0,0,4" />
 
                     <TextBlock Grid.Row="2" Text="{DynamicResource Settings_Language}" VerticalAlignment="Center" Margin="0,0,16,0" />
-                    <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Language}" SelectedItem="{Binding SelectedLanguage, Mode=TwoWay}" DisplayMemberPath="DisplayName" VerticalAlignment="Center" />
+                    <ComboBox Grid.Row="2" Grid.Column="1" ItemsSource="{Binding Language}" SelectedItem="{Binding SelectedLanguage, Mode=TwoWay}" DisplayMemberPath="DisplayName" VerticalAlignment="Center" Margin="0,0,0,4" IsEnabled="False" ToolTip="由于时间问题，没有翻译成其他语言，以后会完善的"/>
 
-                    <Button Grid.Column="2" Grid.Row="1" Content="测试" Click="Button_Click"   />
+                    <!--<TextBlock Grid.Row="3" Text="{DynamicResource Settings_Background}" VerticalAlignment="Center" Margin="0,0,16,0" />
+                    <ComboBox Grid.Row="3" Grid.Column="1" ItemsSource="{Binding ThemeImg}" SelectedItem="{Binding SelectedThemeImg, Mode=TwoWay}" DisplayMemberPath="DisplayName" VerticalAlignment="Center" Margin="0,0,0,4"/>
+
+                    <TextBlock Grid.Row="4" Grid.Column="0" Text="{DynamicResource Settings_Opacity}" VerticalAlignment="Center" Margin="0,0,16,0" />
+                    <Slider x:Name="TransparentSlider" Grid.Row="4" Grid.Column="1" Grid.ColumnSpan="2" Minimum="0" Maximum="100" Value="{Binding Transparent, Mode=TwoWay}" SmallChange="1" LargeChange="1" AutoToolTipPlacement="TopLeft" TickFrequency="0" Margin="0,0,40,0"/>-->
+
+                    <!--<Button Grid.Column="0"  Grid.Row="5" Content="测试" Click="Button_Click"   />-->
                 </Grid>
             </StackPanel>
         </ScrollViewer>

@@ -6,13 +6,13 @@
              xmlns:mui="http://firstfloorsoftware.com/ModernUI"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="600">
-    <Grid Style="{StaticResource ContentRoot}" >
-        <mui:ModernTab x:Name="ff" SelectedSource="Pages/ScriptCreater/VideoContent/CropResize.xaml"  Layout="Tab">
+    <Grid Style="{StaticResource ContentRoot}" Margin="0,28,16,16" >
+        <mui:ModernTab x:Name="ff" SelectedSource="Pages/ScriptCreater/VideoContent/Main.xaml"  Layout="Tab">
             <mui:ModernTab.Links>
-                <mui:Link DisplayName="Main" Source="Pages/ScriptCreater/VideoContent/CropResize.xaml"  />
+                <mui:Link DisplayName="Main" Source="Pages/ScriptCreater/VideoContent/Main.xaml"  />
                 <!--<mui:Link DisplayName="TIVTC" Source="Pages/ScriptCreater/VideoContent/TIVTC.xaml"  />-->
-                <mui:Link DisplayName="Color" Source="Pages/ScriptCreater/VideoContent/ColorPG.xaml"  />
-                <mui:Link DisplayName="De" Source="Pages/ScriptCreater/VideoContent/De.xaml"  />
+                <!--<mui:Link DisplayName="Color" Source="Pages/ScriptCreater/VideoContent/ColorPG.xaml"  />-->
+                <!--<mui:Link DisplayName="De" Source="Pages/ScriptCreater/VideoContent/De.xaml"  />-->
                 <mui:Link DisplayName="Subtitle" Source="Pages/ScriptCreater/VideoContent/Subtitle.xaml"  />
                 <mui:Link DisplayName="Other" Source="Pages/ScriptCreater/VideoContent/Other.xaml"  />
             </mui:ModernTab.Links>

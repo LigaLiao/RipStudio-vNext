@@ -1,19 +1,6 @@
-// 这是主 DLL 文件。
-
-
-#include <Windows.h>
-#include <string>
-#include "..\Avisynth\avisynth.h"
 #include "AvisynthWrapper.h"
-#using <System.Drawing.dll>
-using namespace std;
-using namespace System;
-using namespace System::IO;
 using namespace AvisynthWrapper;
-using namespace System::Drawing::Imaging;
-using namespace System::Drawing;
 
-#pragma comment(lib, "..\\Avisynth\\avisynth.lib")
 Bitmap^ Avisynth::GetVideoFrame(int frm)
 {
 	VideoInfo vi = m_sc->clip->GetVideoInfo();
@@ -36,7 +23,6 @@ Bitmap^ Avisynth::GetVideoFrame(int frm)
 }
 ScriptInfo^ Avisynth::GetScriptInfo()
 {
-
 	VideoInfo vi = m_sc->clip->GetVideoInfo();
 	ScriptInfo^ si = gcnew ScriptInfo();
 	si->height = vi.height;
@@ -77,28 +63,40 @@ Avisynth::Avisynth(System::String^ script, bool isfile)
 	try {
 		m_sc->env = CreateScriptEnvironment(AVISYNTH_INTERFACE_VERSION);
 		AVSValue arg(Script);
-		AVSValue res = NULL;
 		if (isfile)
 		{
-			res = m_sc->env->Invoke("Import", AVSValue(&arg, 1));
+			m_sc->res = m_sc->env->Invoke("Import", AVSValue(&arg, 1));
 		}
 		else
 		{
-		    res = m_sc->env->Invoke("Eval", AVSValue(&arg, 1));
+			m_sc->res = m_sc->env->Invoke("Eval", AVSValue(&arg, 1));
 		}
-		
-		if (!res.IsClip()) {
-			m_sc->env->ThrowError("didn't return a video clip.");
-		}
-		m_sc->clip = res.AsClip();
-		if (!m_sc->clip->GetVideoInfo().IsRGB24())
+		if (!m_sc->res.IsClip()) 
 		{
-			res = m_sc->env->Invoke("ConvertToRGB24", AVSValue(&res, 1));
-			m_sc->clip = res.AsClip();
+			m_sc->env->ThrowError("didn't return a clip.");
 		}
+		m_sc->clip = m_sc->res.AsClip();
+			if (!m_sc->clip->GetVideoInfo().IsRGB24())
+			{
+				m_sc->res = m_sc->env->Invoke("ConvertToRGB24", AVSValue(&m_sc->res, 1));
+				m_sc->clip = m_sc->res.AsClip();
+			}
+		//if (!m_sc->clip->GetVideoInfo().HasVideo())
+		//{
+		//	m_sc->env->ThrowError("No Video.");
+		//}
+		//else
+		//{
+		//	if (!m_sc->clip->GetVideoInfo().IsRGB24())
+		//	{
+		//		m_sc->res = m_sc->env->Invoke("ConvertToRGB24", AVSValue(&m_sc->res, 1));
+		//		m_sc->clip = m_sc->res.AsClip();
+		//	}
+		//}
 	}
-	catch (AvisynthError err) {
-	std:string s(err.msg);
+	catch (AvisynthError err)
+	{
+		string s(err.msg);
 		String^ str3 = gcnew String(s.c_str());
 		throw gcnew System::Exception(str3);
 	}
@@ -108,17 +106,7 @@ Avisynth::Avisynth(System::String^ script, bool isfile)
 		String^ str3 = gcnew String(s.c_str());
 		throw gcnew System::Exception(str3);
 	}
-
-
 }
-
-
-ScriptInfo::ScriptInfo()
-{
-
-}
-
-
 void AvisynthCPP::avs_getframe(void *buf, int stride, int frm)
 {
 	PVideoFrame f = clip->GetFrame(frm, env);
@@ -126,15 +114,4 @@ void AvisynthCPP::avs_getframe(void *buf, int stride, int frm)
 	{
 		env->BitBlt((BYTE*) buf, stride, f->GetReadPtr(), f->GetPitch(), f->GetRowSize(), f->GetHeight());
 	}
-}
-AvisynthCPP::AvisynthCPP()
-{
-
-}
-AvisynthCPP::~AvisynthCPP()
-{
-	
-	clip.~PClip();
-	res.~AVSValue();
-	env->DeleteScriptEnvironment();
 }

@@ -24,7 +24,8 @@ namespace RipStudio
     /// </summary>
     public partial class VideoPlayr : ModernWindow
     {
-        private  Avisynth avs;
+        private Avisynth avs;
+        private ScriptInfo si;
         private string File;
         private bool IsFile;
         private int framenum=0;
@@ -40,20 +41,31 @@ namespace RipStudio
             }
 
             avs = new Avisynth(File, isFile);
-            ScriptInfo si = avs.GetScriptInfo();
-            playProgressSlider.Maximum = framenum=si.num_frames;
-            framerate = (float)si.fps_numerator / (float)si.fps_denominator;
-            III.Source = ReadFrameBitmap(avs.GetVideoFrame(0));
+            si = avs.GetScriptInfo();
+            if (si.HasVideo)
+            {
+                playProgressSlider.Maximum = si.num_frames;
+                framerate = (float)si.fps_numerator / (float)si.fps_denominator;
+                III.Source = ReadFrameBitmap(avs.GetVideoFrame(0));
+            }
+            else
+            {
+                if (avs != null)
+                {
+                    avs.FreeAvisynth();
+                }
+                throw new Exception("No Video.");
+            }
         }
 
         private void playProgressSlider_ValueChanged(object sender, RoutedPropertyChangedEventArgs<double> e)
         {
-            int NUM= (int)e.NewValue;
-            III.Source = ReadFrameBitmap(avs.GetVideoFrame(NUM));
-            zhenshu.Text = "当前是第" + (NUM).ToString()+ "帧";
-            TimeSpan ts = new TimeSpan(0,0,(int)(NUM / framerate));
-            TimeSpan ts2 = new TimeSpan(0, 0, (int)(framenum / framerate));
-            zhenshu.Text = "帧位置：" + NUM + "/" + framenum + "帧  时间位置：" + ts.ToString() + "/" + ts2.ToString();
+            framenum = (int)e.NewValue;
+            III.Source = ReadFrameBitmap(avs.GetVideoFrame(framenum));
+            zhenshu.Text = "当前是第" + (framenum).ToString() + "帧";
+            TimeSpan ts = new TimeSpan(0, 0, (int)(framenum / framerate));
+            TimeSpan ts2 = new TimeSpan(0, 0, (int)(si.num_frames / framerate));
+            zhenshu.Text = "帧位置：" + framenum + "/" + si.num_frames + "帧  时间位置：" + ts.ToString() + "/" + ts2.ToString();
         }
         private BitmapImage ReadFrameBitmap(Bitmap BMP)
         {
@@ -96,13 +108,23 @@ namespace RipStudio
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            if (ZHENTB.Text != "")
+            try
             {
-                    int zhen;
-                    zhen = int.Parse(ZHENTB.Text);
-                    III.Source = ReadFrameBitmap(avs.GetVideoFrame(zhen));
-                    playProgressSlider.Value = zhen;
+                framenum = int.Parse(ZHENTB.Text);
+                if (framenum > si.num_frames || framenum < 0)
+                {
+                    ModernDialog.ShowMessage("你输入的帧数超出了范围！", "RipStudio Message", MessageBoxButton.OK);
+                }
+                else
+                {
+                    playProgressSlider.Value = framenum;
+                }
             }
+            catch
+            {
+                ModernDialog.ShowMessage("你输入的不是数字或者不全是数字！", "RipStudio Message", MessageBoxButton.OK);
+            }
+
         }
 
 
@@ -110,6 +132,31 @@ namespace RipStudio
         private void ModernWindow_Closing(object sender, System.ComponentModel.CancelEventArgs e)
         {
             this.WindowStyle = WindowStyle.None;
+            if (avs != null)
+            {
+                avs.FreeAvisynth();
+            }
         }
+
+        private void 缩放_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            try
+            {
+                //int.Parse((sender as TextBox).Text);
+                //ScaleTransform scaleTran = new ScaleTransform(8.0, 8.0);
+            //if (III != null)
+            //{
+                (III.RenderTransform as ScaleTransform).ScaleX = (III.RenderTransform as ScaleTransform).ScaleY = int.Parse((sender as TextBox).Text) / 100.0;
+            //}
+
+
+            }
+            catch
+            {
+
+            }
+        }
+
+
     }
 }

@@ -1,25 +1,22 @@
-// 这是主 DLL 文件。
-#include <Windows.h>
-#include <string>
-#include <fstream>
-#include <stdint.h>
-#include "..\Avisynth\avisynth.h"
-#include "aacenc_lib.h"
 #include "libavs2aac.h"
-#pragma comment(lib, "..\\Avisynth\\Avisynth.lib")
-#pragma comment(lib, "libfdk-aac.lib")
 using namespace libavs2aac;
-using namespace std;
-using namespace System;
-using namespace System::ComponentModel;
 
-AacEncoder::AacEncoder(String^ filename)
+AacEncoder::AacEncoder(String^ script, bool isfile)
 {
 	m_sc = new AvisynthCPP;
-	const char* infile = (const char*) (void *) (System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi(filename));
-	try {
+	const char* Script = (const char*) (void *) (System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi(script));
+	try
+	{
+		AVSValue arg(Script);
 		m_sc->env = CreateScriptEnvironment(AVISYNTH_INTERFACE_VERSION);
-		m_sc->res = m_sc->env->Invoke("Import", AVSValue(infile));
+		if (isfile)
+		{
+			m_sc->res = m_sc->env->Invoke("Import", AVSValue(&arg, 1));
+		}
+		else
+		{
+			m_sc->res = m_sc->env->Invoke("Eval", AVSValue(&arg, 1));
+		}
 		if (!m_sc->res.IsClip())
 		{
 			m_sc->env->ThrowError("didn't return clip.");
@@ -30,6 +27,23 @@ AacEncoder::AacEncoder(String^ filename)
 		{
 			m_sc->env->ThrowError("No audio.");
 		}
+		else
+		{
+			if (m_sc->vi.SampleType() != SAMPLE_INT16)
+			{
+				if (isfile)
+				{
+					m_sc->env->ThrowError("AAC only supports 16bit input.");
+				}
+				else
+				{
+					m_sc->res = m_sc->env->Invoke("ConvertAudioTo16bit", AVSValue(&m_sc->res, 1));
+					m_sc->clip = m_sc->res.AsClip();
+					m_sc->vi = m_sc->clip->GetVideoInfo();
+				}
+			}
+		}
+
 	}
 	catch (AvisynthError err) {
 		string s(err.msg);
@@ -50,7 +64,7 @@ String^ AacEncoder::Start(String^ filename, BackgroundWorker^ bw, AacEncoderConf
 	std::fstream out;
 	out.open(outfile, std::fstream::binary | std::fstream::out);
 
-	uint64_t i,count, target;
+	uint64_t i, count, target;
 	int  sample_rate, channels;
 	int input_size;
 	uint8_t* input_buf;
@@ -61,7 +75,6 @@ String^ AacEncoder::Start(String^ filename, BackgroundWorker^ bw, AacEncoderConf
 
 	channels = m_sc->vi.AudioChannels();
 	sample_rate = m_sc->vi.audio_samples_per_second;
-	count = m_sc->vi.audio_samples_per_second;
 	target = m_sc->vi.num_audio_samples;
 
 	switch (channels) {
@@ -74,26 +87,26 @@ String^ AacEncoder::Start(String^ filename, BackgroundWorker^ bw, AacEncoderConf
 	default:return L"Unsupported audio channels.";
 	}
 
-	if (aacEncOpen(&handle, 0, channels) != AACENC_OK) {return L"nable to open encoder.";}
+	if (aacEncOpen(&handle, 0, channels) != AACENC_OK) { return L"Unable to open encoder."; }
 
 	if (aacEncoder_SetParam(handle, AACENC_AOT, Config->AOT) != AACENC_OK) { return L"Unable to set the AOT."; }
 
-	if (aacEncoder_SetParam(handle, AACENC_SAMPLERATE, sample_rate) != AACENC_OK) {return L"Unable to set the AOT.";}
+	if (aacEncoder_SetParam(handle, AACENC_SAMPLERATE, sample_rate) != AACENC_OK) { return L"Unable to set the sample_rate."; }
 
-	if (aacEncoder_SetParam(handle, AACENC_CHANNELMODE, mode) != AACENC_OK) {return L"nable to set the channel mode.";}
+	if (aacEncoder_SetParam(handle, AACENC_CHANNELMODE, mode) != AACENC_OK) { return L"nable to set the channel mode."; }
 
-	if (aacEncoder_SetParam(handle, AACENC_CHANNELORDER, 1) != AACENC_OK) {return L"Unable to set the wav channel order.";}
+	if (aacEncoder_SetParam(handle, AACENC_CHANNELORDER, 1) != AACENC_OK) { return L"Unable to set the wav channel order."; }
 
 	if (Config->VBR) { if (aacEncoder_SetParam(handle, AACENC_BITRATEMODE, Config->VBR) != AACENC_OK) { return L"Unable to set the VBR bitrate mode."; } }
 	else { if (aacEncoder_SetParam(handle, AACENC_BITRATE, Config->Bitrate) != AACENC_OK) { return L"Unable to set the bitrate."; } }
 
-	if (aacEncoder_SetParam(handle, AACENC_TRANSMUX, 2) != AACENC_OK) {return L"Unable to set the ADTS transmux.";}
+	if (aacEncoder_SetParam(handle, AACENC_TRANSMUX, 2) != AACENC_OK) { return L"Unable to set the ADTS transmux."; }
 
 	if (aacEncoder_SetParam(handle, AACENC_AFTERBURNER, Config->Afterburner) != AACENC_OK) { return L"Unable to set the afterburner mode."; }
 
-	if (aacEncEncode(handle, NULL, NULL, NULL, NULL) != AACENC_OK) {return L"Unable to initialize the encoder.";}
+	if (aacEncEncode(handle, NULL, NULL, NULL, NULL) != AACENC_OK) { return L"Unable to initialize the encoder."; }
 
-	if (aacEncInfo(handle, &info) != AACENC_OK) {return L"Unable to get the encoder info.";}
+	if (aacEncInfo(handle, &info) != AACENC_OK) { return L"Unable to get the encoder info."; }
 
 	AACENC_BufDesc in_buf = { 0 }, out_buf = { 0 };
 	AACENC_InArgs in_args = { 0 };
@@ -111,80 +124,108 @@ String^ AacEncoder::Start(String^ filename, BackgroundWorker^ bw, AacEncoderConf
 	input_size = channels * 2 * info.frameLength;;
 	input_buf = new uint8_t[input_size];
 	convert_buf = new int16_t[input_size];
-	//input_buf = new uint8_t[input_size*sizeof(int8_t)];
-	//convert_buf = new int16_t[input_size*sizeof(int16_t)];
-	//input_buf = (uint8_t*) malloc(input_size);
-	//convert_buf = (int16_t*) malloc(input_size);
 
-	for (i = 0; i < target; i += count) {
-		if (target - i < count) count = (size_t) (target - i);
-		m_sc->clip->GetAudio(input_buf, i, count, m_sc->env);
-		read = channels * 2 * count;
-		for (i2 = 0; i2 < read / 2; i2++) {
-			const uint8_t* in = &input_buf[2 * i2];
-			convert_buf[i2] = in[0] | (in[1] << 8);
-		}
-		if (count <= 0)
-		{
-			in_args.numInSamples = -1;
-		}
-		else
-		{
-			in_ptr = convert_buf;
-			in_size = read;
-			in_elem_size = 2;
-
-			in_args.numInSamples = read / 2;
-			in_buf.numBufs = 1;
-			in_buf.bufs = &in_ptr;
-			in_buf.bufferIdentifiers = &in_identifier;
-			in_buf.bufSizes = &in_size;
-			in_buf.bufElSizes = &in_elem_size;
-		}
-		out_ptr = outbuf;
-		out_size = sizeof(outbuf);
-		out_elem_size = 1;
-		out_buf.numBufs = 1;
-		out_buf.bufs = &out_ptr;
-		out_buf.bufferIdentifiers = &out_identifier;
-		out_buf.bufSizes = &out_size;
-		out_buf.bufElSizes = &out_elem_size;
-
-		if ((err = aacEncEncode(handle, &in_buf, &out_buf, &in_args, &out_args)) != AACENC_OK) {
-			if (err == AACENC_ENCODE_EOF)
+	try
+	{
+		double start = GetTickCount();
+		for (i = 0; i < target; i += count) {
+			if (!bw->CancellationPending)
 			{
-				break;
+				if (target - i < count) count = (size_t) (target - i);
+				m_sc->clip->GetAudio(input_buf, i, count, m_sc->env);
+				read = channels * 2 * count;
+				for (i2 = 0; i2 < read / 2; i2++) {
+					const uint8_t* in = &input_buf[2 * i2];
+					convert_buf[i2] = in[0] | (in[1] << 8);
+				}
+				if (count <= 0)
+				{
+					in_args.numInSamples = -1;
+				}
+				else
+				{
+					in_ptr = convert_buf;
+					in_size = read;
+					in_elem_size = 2;
+
+					in_args.numInSamples = read / 2;
+					in_buf.numBufs = 1;
+					in_buf.bufs = &in_ptr;
+					in_buf.bufferIdentifiers = &in_identifier;
+					in_buf.bufSizes = &in_size;
+					in_buf.bufElSizes = &in_elem_size;
+				}
+				out_ptr = outbuf;
+				out_size = sizeof(outbuf);
+				out_elem_size = 1;
+				out_buf.numBufs = 1;
+				out_buf.bufs = &out_ptr;
+				out_buf.bufferIdentifiers = &out_identifier;
+				out_buf.bufSizes = &out_size;
+				out_buf.bufElSizes = &out_elem_size;
+
+				if ((err = aacEncEncode(handle, &in_buf, &out_buf, &in_args, &out_args)) != AACENC_OK) {
+					if (err == AACENC_ENCODE_EOF)
+					{
+						break;
+					}
+					if (input_buf){ delete input_buf; }
+					if (convert_buf){ delete convert_buf; }
+					aacEncClose(&handle);
+					if (m_sc){ delete m_sc; }
+					out.close();
+
+					return L"Encoding failed.";
+				}
+				if (out_args.numOutBytes == 0)
+					continue;
+				out.write((char*) outbuf, out_args.numOutBytes);
+
+				array<double>^ myArray = gcnew array<double>(2);
+				myArray[0] = ((float) i / (float) m_sc->vi.audio_samples_per_second) / ((GetTickCount() - start) / 1000);
+				myArray[1] = (target / m_sc->vi.audio_samples_per_second / myArray[0]);
+
+				bw->ReportProgress((i * 100 / target), myArray);
 			}
-			delete input_buf;
-			delete convert_buf;
-			aacEncClose(&handle);
-			out.close();
-			m_sc->clip->~IClip();
-			m_sc->clip.~PClip();
-			m_sc->res.~AVSValue();
-			m_sc->env->DeleteScriptEnvironment();
-			return L"Encoding failed.";
+			else
+			{
+				out.close();
+				if (input_buf){ delete input_buf; }
+				if (convert_buf){ delete convert_buf; }
+				aacEncClose(&handle);
+				if (m_sc){ delete m_sc; }
+
+				int num = MultiByteToWideChar(0, 0, outfile, -1, NULL, 0);
+				wchar_t *wide = new wchar_t[num];
+				MultiByteToWideChar(0, 0, outfile, -1, wide, num);
+				DeleteFile(wide);
+				return  L"Cancel";
+			}
 		}
-		if (out_args.numOutBytes == 0)
-			continue;
-		out.write((char*) outbuf, out_args.numOutBytes);
-		bw->ReportProgress((i * 100 / target));
+		out.close();
+		if (input_buf){ delete input_buf; }
+		if (convert_buf){ delete convert_buf; }
+		aacEncClose(&handle);
+
+		return  L"END";
 	}
+	catch (System::Runtime::InteropServices::SEHException^ eee)
+	{
+		if (input_buf){ delete input_buf; }
+		if (convert_buf){ delete convert_buf; }
+		aacEncClose(&handle);
+		if (m_sc){ delete m_sc; }
+		out.close();
+		return "Source error,Avisynth cannot read!";
+	}
+	catch (exception err)
+	{
+		if (input_buf){ delete input_buf; }
+		if (convert_buf){ delete convert_buf; }
+		aacEncClose(&handle);
+		if (m_sc){ delete m_sc; }
+		out.close();
 
-	delete input_buf;
-	delete convert_buf;
-	aacEncClose(&handle);
-	out.close();
-	//m_sc->clip.~PClip();
-	//m_sc->res.~AVSValue();
-	//m_sc->env->DeleteScriptEnvironment();
-	//delete m_sc;
-	m_sc->clip->~IClip();
-	m_sc->clip.~PClip();
-	m_sc->res.~AVSValue();
-	m_sc->env->DeleteScriptEnvironment();
-
-	bw->ReportProgress(100);
-
-	return  L"Complete";
+		return  gcnew String(err.what());
+	}
 }

@@ -6,11 +6,17 @@
              xmlns:mui="http://firstfloorsoftware.com/ModernUI"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-    <Grid Style="{StaticResource ContentRoot}" Margin="16">
-        <TextBlock Text="文件地址：" HorizontalAlignment="Left" VerticalAlignment="Top" Margin="0,2,0,0"/>
-        <TextBox VerticalAlignment="Top"  PreviewDragEnter="TextBox_PreviewDragEnter" PreviewDrop="TextBox_PreviewDrop"  Margin="70,0,30,0" PreviewDragOver="TextBox_PreviewDragOver" ToolTip="可以直接拖文件到这里"/>
-        <Button HorizontalAlignment="Right" VerticalAlignment="Top" Content="..." Padding="8,2"/>
-        <TreeView x:Name="MFTV"    BorderThickness="0" Margin="0,30,0,0" />
-
+    <Grid Style="{StaticResource ContentRoot}" Margin="0,16,16,16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="auto"/>
+        </Grid.RowDefinitions>
+        <TextBox x:Name="MITB" IsReadOnly="True" Grid.Row="0" TextWrapping="Wrap" VerticalScrollBarVisibility="Auto" PreviewDragEnter="TextBox_PreviewDragEnter" PreviewDrop="TextBox_PreviewDrop"  PreviewDragOver="TextBox_PreviewDragOver" ToolTip="可以直接拖文件到这里" Margin="0,0,0,4"/>
+        <Grid Margin="0,0,0,4" Grid.Row="1">
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                <Button  Content="选择文件" Padding="8,2" Click="Button_Click" Margin="4,0" Grid.Column="2"/>
+                <Button  Content="复制信息" Padding="8,2" Click="Button2_Click" Margin="4,0,0,0" Grid.Column="2"/>
+            </StackPanel>
+        </Grid>
     </Grid>
 </UserControl>

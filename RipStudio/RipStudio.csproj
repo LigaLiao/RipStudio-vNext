@@ -13,6 +13,7 @@
     <FileAlignment>512</FileAlignment>
     <ProjectTypeGuids>{60dc8134-eba5-43b8-bcc9-bb4bc16c2548};{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}</ProjectTypeGuids>
     <WarningLevel>4</WarningLevel>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
     <PublishUrl>发布\</PublishUrl>
     <Install>true</Install>
     <InstallFrom>Disk</InstallFrom>
@@ -25,7 +26,6 @@
     <MapFileExtensions>true</MapFileExtensions>
     <ApplicationRevision>0</ApplicationRevision>
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
-    <IsWebBootstrapper>false</IsWebBootstrapper>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
@@ -40,7 +40,7 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <PlatformTarget>AnyCPU</PlatformTarget>
+    <PlatformTarget>x86</PlatformTarget>
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
     <OutputPath>bin\Release\</OutputPath>
@@ -49,16 +49,16 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup>
-    <ApplicationIcon>RS.ico</ApplicationIcon>
+    <ApplicationIcon>RipStudio_Logo.ico</ApplicationIcon>
   </PropertyGroup>
   <PropertyGroup>
     <SignManifests>false</SignManifests>
   </PropertyGroup>
   <PropertyGroup>
-    <SignAssembly>true</SignAssembly>
+    <SignAssembly>false</SignAssembly>
   </PropertyGroup>
   <PropertyGroup>
-    <AssemblyOriginatorKeyFile>RipStudio.pfx</AssemblyOriginatorKeyFile>
+    <AssemblyOriginatorKeyFile>RipStudio_Key.pfx</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <DebugSymbols>true</DebugSymbols>
@@ -75,7 +75,27 @@
     <DefineConstants>TRACE</DefineConstants>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
-    <PlatformTarget>x86</PlatformTarget>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x64'">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x64\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
+    <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
+    <Prefer32Bit>true</Prefer32Bit>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x64'">
+    <OutputPath>bin\x64\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x64</PlatformTarget>
     <ErrorReport>prompt</ErrorReport>
     <CodeAnalysisRuleSet>MinimumRecommendedRules.ruleset</CodeAnalysisRuleSet>
     <Prefer32Bit>true</Prefer32Bit>
@@ -85,12 +105,10 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>.\FirstFloor.ModernUI.dll</HintPath>
     </Reference>
-    <Reference Include="MediaInfoDotNet">
-      <HintPath>.\MediaInfoDotNet.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
     <Reference Include="System.Drawing" />
+    <Reference Include="System.Web.Extensions" />
     <Reference Include="System.Xml" />
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="System.Core" />
@@ -108,6 +126,10 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </ApplicationDefinition>
+    <Page Include="CheckScriptWindow.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
     <Page Include="Language\SimplifiedChinese.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -116,11 +138,19 @@
       <Generator>MSBuild:Compile</Generator>
       <SubType>Designer</SubType>
     </Page>
-    <Page Include="Pages\Extended\ApictureEncode.xaml">
+    <Page Include="Assets\Style.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Pages\Extended\OverSpeed.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\Extended\EasyEncode.xaml">
+    <Page Include="Pages\Extended\FanHuaJi.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\Muxer\Control\BasicPage1.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -128,19 +158,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\ScriptCreater\VideoContent\ColorPG.xaml">
+    <Page Include="Pages\ScriptCreater\AudioContent\Main.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\ScriptCreater\VideoContent\CropResize.xaml">
+    <Page Include="Pages\ScriptCreater\VideoContent\Main.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
     <Page Include="Pages\Settings\Content\About.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
-    <Page Include="Pages\Settings\Content\Config.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -156,26 +182,30 @@
       <DependentUpon>App.xaml</DependentUpon>
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Pages\Extended\ApictureEncode.xaml.cs">
-      <DependentUpon>ApictureEncode.xaml</DependentUpon>
+    <Compile Include="CheckScriptWindow.xaml.cs">
+      <DependentUpon>CheckScriptWindow.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Extended\EasyEncode.xaml.cs">
-      <DependentUpon>EasyEncode.xaml</DependentUpon>
+    <Compile Include="MediaInfoDLL.cs" />
+    <Compile Include="Pages\Extended\OverSpeed.xaml.cs">
+      <DependentUpon>OverSpeed.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Extended\FanHuaJi.xaml.cs">
+      <DependentUpon>FanHuaJi.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Muxer\Control\BasicPage1.xaml.cs">
+      <DependentUpon>BasicPage1.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\ScriptCreater\Audio.xaml.cs">
       <DependentUpon>Audio.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\ScriptCreater\VideoContent\ColorPG.xaml.cs">
-      <DependentUpon>ColorPG.xaml</DependentUpon>
+    <Compile Include="Pages\ScriptCreater\AudioContent\Main.xaml.cs">
+      <DependentUpon>Main.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\ScriptCreater\VideoContent\CropResize.xaml.cs">
-      <DependentUpon>CropResize.xaml</DependentUpon>
+    <Compile Include="Pages\ScriptCreater\VideoContent\Main.xaml.cs">
+      <DependentUpon>Main.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\Settings\Content\About.xaml.cs">
       <DependentUpon>About.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\Settings\Content\Config.xaml.cs">
-      <DependentUpon>Config.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\Settings\Content\SettingsAppearance.xaml.cs">
       <DependentUpon>SettingsAppearance.xaml</DependentUpon>
@@ -205,10 +235,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\ScriptCreater\VideoContent\De.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Pages\ScriptCreater\VideoContent\Other.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -221,7 +247,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\Video\H264Main.xaml">
+    <Page Include="Pages\Video\H264SettingsTabPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\Video\H264Settings\Advanced.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Pages\Video\H264IO.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -229,11 +263,15 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\Video\H264\Main.xaml">
+    <Page Include="Pages\Video\H265SettingsTabPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\Video\H265Main.xaml">
+    <Page Include="Pages\Video\H264Settings\Main.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\Video\H265IO.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -241,7 +279,11 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\Video\H265\Main.xaml">
+    <Page Include="Pages\Video\H265Settings\Advanced.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Pages\Video\H265Settings\Main.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
@@ -277,10 +319,6 @@
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>
-    <Page Include="Pages\ScriptCreater\AudioContent\AudioMain.xaml">
-      <SubType>Designer</SubType>
-      <Generator>MSBuild:Compile</Generator>
-    </Page>
     <Page Include="Pages\ScriptCreater\Video.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
@@ -306,9 +344,6 @@
     <Compile Include="Pages\ScriptCreater\Main.xaml.cs">
       <DependentUpon>Main.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\ScriptCreater\VideoContent\De.xaml.cs">
-      <DependentUpon>De.xaml</DependentUpon>
-    </Compile>
     <Compile Include="Pages\ScriptCreater\VideoContent\Other.xaml.cs">
       <DependentUpon>Other.xaml</DependentUpon>
     </Compile>
@@ -318,26 +353,37 @@
     <Compile Include="Pages\ScriptCreater\VideoContent\TIVTC.xaml.cs">
       <DependentUpon>TIVTC.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Video\H264Main.xaml.cs">
-      <DependentUpon>H264Main.xaml</DependentUpon>
+    <Compile Include="Pages\Video\H264SettingsTabPage.xaml.cs">
+      <DependentUpon>H264SettingsTabPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Video\H264Settings\Advanced.xaml.cs">
+      <DependentUpon>Advanced.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Video\H264IO.xaml.cs">
+      <DependentUpon>H264IO.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\Video\H264Page.xaml.cs">
       <DependentUpon>H264Page.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Video\H264\Main.xaml.cs">
+    <Compile Include="Pages\Video\H265SettingsTabPage.xaml.cs">
+      <DependentUpon>H265SettingsTabPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Video\H264Settings\Main.xaml.cs">
       <DependentUpon>Main.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Video\H265Main.xaml.cs">
-      <DependentUpon>H265Main.xaml</DependentUpon>
+    <Compile Include="Pages\Video\H265IO.xaml.cs">
+      <DependentUpon>H265IO.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\Video\H265Page.xaml.cs">
       <DependentUpon>H265Page.xaml</DependentUpon>
     </Compile>
-    <Compile Include="Pages\Video\H265\Main.xaml.cs">
+    <Compile Include="Pages\Video\H265Settings\Advanced.xaml.cs">
+      <DependentUpon>Advanced.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Pages\Video\H265Settings\Main.xaml.cs">
       <DependentUpon>Main.xaml</DependentUpon>
     </Compile>
-    <Compile Include="JobType.cs" />
-    <Compile Include="ThemeConverter.cs" />
+    <Compile Include="Class.cs" />
     <Compile Include="VideoPlayr.xaml.cs">
       <DependentUpon>VideoPlayr.xaml</DependentUpon>
     </Compile>
@@ -361,9 +407,6 @@
     </Compile>
     <Compile Include="Pages\Muxer\mp4.xaml.cs">
       <DependentUpon>mp4.xaml</DependentUpon>
-    </Compile>
-    <Compile Include="Pages\ScriptCreater\AudioContent\AudioMain.xaml.cs">
-      <DependentUpon>AudioMain.xaml</DependentUpon>
     </Compile>
     <Compile Include="Pages\ScriptCreater\Video.xaml.cs">
       <DependentUpon>Video.xaml</DependentUpon>
@@ -393,13 +436,27 @@
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>
     </None>
     <AppDesigner Include="Properties\" />
-    <None Include="RipStudio.pfx" />
+    <None Include="RipStudio_Key.pfx" />
   </ItemGroup>
   <ItemGroup>
     <None Include="App.config" />
   </ItemGroup>
   <ItemGroup>
-    <Resource Include="RS.ico" />
+    <BootstrapperPackage Include=".NETFramework,Version=v4.5">
+      <Visible>False</Visible>
+      <ProductName>Microsoft .NET Framework 4.5 %28x86 和 x64%29</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\AvisynthWrapper\AvisynthWrapper.vcxproj">
@@ -426,26 +483,19 @@
       <Project>{c8dcb719-1836-46a4-a0fc-83b17177a4bf}</Project>
       <Name>libavs2x265</Name>
     </ProjectReference>
+    <ProjectReference Include="..\libmuxer\libmuxer.csproj">
+      <Project>{b88aa563-a090-4ac8-86bc-7c89451444f0}</Project>
+      <Name>libmuxer</Name>
+    </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <BootstrapperPackage Include=".NETFramework,Version=v4.5">
-      <Visible>False</Visible>
-      <ProductName>Microsoft .NET Framework 4.5 %28x86 和 x64%29</ProductName>
-      <Install>true</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
-    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
-      <Visible>False</Visible>
-      <ProductName>.NET Framework 3.5 SP1</ProductName>
-      <Install>false</Install>
-    </BootstrapperPackage>
+    <Resource Include="Pages\Extended\fanhuaji.jpg" />
   </ItemGroup>
   <ItemGroup>
-    <SplashScreen Include="SplashScreen.bmp" />
+    <Resource Include="RipStudio_Logo.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <Resource Include="Assets\bg01.jpg" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

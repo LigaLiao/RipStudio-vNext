@@ -1,8 +1,8 @@
 ﻿<ResourceDictionary xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
                     xmlns:sys="clr-namespace:System;assembly=mscorlib">
-    <sys:String x:Key="TitleLinks_0">帮助</sys:String>
-    <sys:String x:Key="TitleLinks_1">设置</sys:String>
+    <sys:String x:Key="TitleLinks_0">官方主页</sys:String>
+    <sys:String x:Key="TitleLinks_1">设置关于</sys:String>
     <sys:String x:Key="TitleLinks_2">任务队列</sys:String>
 
     <sys:String x:Key="MenuLinkGroups_Welcome">始页</sys:String>
@@ -12,7 +12,7 @@
     <sys:String x:Key="MenuLinkGroups_Mux">混流</sys:String>
     <sys:String x:Key="MenuLinkGroups_Extended">拓展</sys:String>
 
-    <sys:String x:Key="Welcome_Link_0">介绍</sys:String>
+    <sys:String x:Key="Welcome_Link_0">欢迎</sys:String>
     <sys:String x:Key="AviSynth_Link_0">I/O</sys:String>
     <sys:String x:Key="AviSynth_Link_1">视频</sys:String>
     <sys:String x:Key="AviSynth_Link_2">音频</sys:String>
@@ -28,19 +28,21 @@
     <sys:String x:Key="Settings_Style">界面样式</sys:String>
     <sys:String x:Key="Settings_Config">软件配置</sys:String>
     <sys:String x:Key="Settings_About">关于</sys:String>
-
+    <sys:String x:Key="Settings_Opacity">不透明度:</sys:String>
+    <sys:String x:Key="Settings_Background">背景图片:</sys:String>
+    
     <!--IntroductionPage-->
-    <sys:String x:Key="Introduction" xml:space="preserve">       RipStudio vNext是继RipStudio第一版本失败后的完全重写版本（vNext是开发代号，意思是下一版本），它是现代的视音频重编码软件，主要面向字幕组人员、视频爱好者、up主等，支持网络流行的大部分编码，如H.264、H.265、AAC、FLAC编码。它的界面十分现代、并支持全球化（多国语言），且操作简易快捷。&#13;       与RipStudio第一版和现网络流行的MEGUI、小丸工具箱不同的是，RipStudio vNext不是生成命令去调用第三方或者外部程序执行编码任务的图形前端或者是大家说的所谓的壳，而是使用C#/C++混合编程调用一些开源库来开发的软件，不依赖外部程序。&#13;&#13;       当前版本为预览版2，功能缺乏，主要功能只有脚本创建和音频编码的功能可用，希望大家预览过后能反馈简单的意见和建议！</sys:String>
+    <sys:String x:Key="Introduction" xml:space="preserve">       这是全新的RipStudio，抛弃了原来调用外部程序的设计改为通过编程去调用各种库，它是更现代的视音频重编码软件，支持网络上主流的编码，如H.264、H.265、AAC、FLAC编码，全新的RipStudio拥有易用、简洁、美观的界面，并支持全球化（多国语言）</sys:String>
 
     <!--AviSynthPage-->
-    <sys:String x:Key="AviSynth_VideoInput" xml:space="preserve">视频输入:  </sys:String>
-    <sys:String x:Key="AviSynth_AudioInput" xml:space="preserve">音频输入:  </sys:String>
+    <sys:String x:Key="AviSynth_VideoInput" xml:space="preserve">视频输入:</sys:String>
+    <sys:String x:Key="AviSynth_AudioInput" xml:space="preserve">音频输入:</sys:String>
     <sys:String x:Key="AviSynth_CheckBox_0">音频和视频是同一个源</sys:String>
     <sys:String x:Key="AviSynth_CheckBox_1">自动载入与视频源文件名相同的ass字幕</sys:String>
     <sys:String x:Key="AviSynth_CheckBox_2">保存完后加载到编码器</sys:String>
     <sys:String x:Key="AviSynth_CheckBox_3">手动选择保存地址</sys:String>
 
-    <sys:String x:Key="AviSynth_Button_0">打开脚本</sys:String>
+    <sys:String x:Key="AviSynth_Button_0">查看脚本</sys:String>
     <sys:String x:Key="AviSynth_Button_1">预览脚本</sys:String>
     <sys:String x:Key="AviSynth_Button_2">保存脚本</sys:String>
     <sys:String x:Key="AviSynth_Button_3">添加</sys:String>
@@ -52,9 +54,9 @@
     <sys:String x:Key="AviSynth_Tip_1">提示：双击行就可以编辑，按回车可以新建一行。当脚本只有音频输入的时候，单位是秒，其他情况是帧。</sys:String>
 
     <!--Video&AudioPage-->
-    <sys:String x:Key="AV_in" xml:space="preserve">脚本输入: </sys:String>
-    <sys:String x:Key="Audio_out" xml:space="preserve">音频输出: </sys:String>
-    <sys:String x:Key="Video_out" xml:space="preserve">视频输出: </sys:String>
+    <sys:String x:Key="AV_in" xml:space="preserve">脚本输入:</sys:String>
+    <sys:String x:Key="Audio_out" xml:space="preserve">音频输出:</sys:String>
+    <sys:String x:Key="Video_out" xml:space="preserve">视频输出:</sys:String>
     <sys:String x:Key="AV_Bottom_0" xml:space="preserve">立即开始</sys:String>
     <sys:String x:Key="AV_Bottom_1" xml:space="preserve">加入队列</sys:String>
 

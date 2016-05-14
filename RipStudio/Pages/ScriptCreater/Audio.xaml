@@ -5,12 +5,13 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:mui="http://firstfloorsoftware.com/ModernUI"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
-    <Grid Style="{StaticResource ContentRoot}">
-        <mui:ModernTab SelectedSource="Pages/ScriptCreater/AudioContent/AudioMain.xaml"  Layout="Tab">
+             d:DesignHeight="300" d:DesignWidth="600">
+    <Grid Style="{StaticResource ContentRoot}" Margin="0,28,16,16" >
+        <mui:ModernTab x:Name="ff" SelectedSource="Pages/ScriptCreater/AudioContent/Main.xaml"  Layout="Tab">
             <mui:ModernTab.Links>
-                <mui:Link DisplayName="Main" Source="Pages/ScriptCreater/AudioContent/AudioMain.xaml"  />
+                <mui:Link DisplayName="Main" Source="Pages/ScriptCreater/AudioContent/Main.xaml"  />
             </mui:ModernTab.Links>
         </mui:ModernTab>
     </Grid>
 </UserControl>
+

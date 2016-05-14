@@ -2,6 +2,8 @@
 using FirstFloor.ModernUI.Windows.Controls;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.IO;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -32,8 +34,19 @@ namespace RipStudio.Pages.Settings.Content
 
         private void Button_Click(object sender, RoutedEventArgs e)
         {
-            ModernDialog.ShowMessage(Properties.Settings.Default.Language_Uri.ToString(), "RipStudio Message", MessageBoxButton.OK);
             
+            //DirectoryInfo TheFolder2 = new DirectoryInfo(System.IO.Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName) + @"\Language");
+            //foreach (FileInfo NextFile in TheFolder2.GetFiles())
+            //{
+            //    if (NextFile.Extension == ".xaml" || NextFile.Extension == ".XAML")
+            //    {
+            //        //this.language.Add(new Link { DisplayName = System.IO.Path.GetFileNameWithoutExtension(NextFile.Name), Source = new Uri(@"Language\ + System.IO.Path.GetFileName(NextFile.Name), UriKind.Relative) });
+            //        //this.language.Add(new Link { DisplayName = System.IO.Path.GetFileNameWithoutExtension(NextFile.Name), Source = new Uri(NextFile.Name, UriKind.Absolute) });
+            //        ModernDialog.ShowMessage(NextFile.Name, "RipStudio Message", MessageBoxButton.OK);
+            //    }
+            //}
+            //ModernDialog.ShowMessage(new Uri("Pack://application:,,," + @"/Background/" + "123.jpg",UriKind.Absolute), "RipStudio Message", MessageBoxButton.OK);
+             ;
         }
     }
 }

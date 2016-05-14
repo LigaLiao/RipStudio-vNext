@@ -16,7 +16,7 @@ using System.Windows.Shapes;
 namespace RipStudio.Pages.ScriptCreater
 {
     /// <summary>
-    /// Interaction logic for Audio.xaml
+    /// Audio.xaml 的交互逻辑
     /// </summary>
     public partial class Audio : UserControl
     {

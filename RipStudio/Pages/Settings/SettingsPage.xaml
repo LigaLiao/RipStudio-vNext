@@ -6,12 +6,12 @@
              xmlns:mui="http://firstfloorsoftware.com/ModernUI"
              mc:Ignorable="d" 
              d:DesignHeight="300" d:DesignWidth="300">
-    <Grid Style="{StaticResource ContentRoot}">
+    <Grid Style="{StaticResource ContentRoot}" Margin="0,16,16,16">
         <mui:ModernTab SelectedSource="Pages/Settings/Content/SettingsAppearance.xaml" Layout="List">
             <mui:ModernTab.Links>
-                <mui:Link x:Name="Link1" DisplayName="{DynamicResource Settings_Style}" Source="Pages/Settings/Content/SettingsAppearance.xaml" />
-                <mui:Link x:Name="Link2" DisplayName="{DynamicResource Settings_Config}" Source="Pages/Settings/Content/Config.xaml" />
-                <mui:Link x:Name="Link3" DisplayName="{DynamicResource Settings_About}" Source="Pages/Settings/Content/About.xaml" />
+                <mui:Link x:Name="Link1" DisplayName="{StaticResource Settings_Style}" Source="Pages/Settings/Content/SettingsAppearance.xaml" />
+                <!--<mui:Link x:Name="Link2" DisplayName="{DynamicResource Settings_Config}" Source="Pages/Settings/Content/Config.xaml" />-->
+                <mui:Link x:Name="Link2" DisplayName="{StaticResource Settings_About}" Source="Pages/Settings/Content/About.xaml" />
             </mui:ModernTab.Links>
         </mui:ModernTab>
     </Grid>

@@ -10,6 +10,8 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Markup;
 using System.Windows.Media;
+using System.Windows.Media.Imaging;
+using System.Windows.Shapes;
 using System.Xml;
 
 namespace RipStudio.Pages.Settings.Content
@@ -52,45 +54,37 @@ namespace RipStudio.Pages.Settings.Content
             Color.FromRgb(0xff, 0x00, 0x97),   // magenta
             //Color.FromRgb(0xa2, 0x00, 0xff),   // purple   
         };
-
+        
         private LinkCollection themes = new LinkCollection();
         private Link selectedTheme=null;
 
         private LinkCollection language = new LinkCollection();
         private Link selectedLanguage = null;
 
+        private LinkCollection themeImg = new LinkCollection();
+        private Link selectedThemeImg = null;
+
         public SettingsAppearanceViewModel()
         {
-            // add the default themes
             this.themes.Add(new Link { DisplayName = "Dark", Source = AppearanceManager.DarkThemeSource });
             this.themes.Add(new Link { DisplayName = "Light", Source = AppearanceManager.LightThemeSource });
-
-            // add additional themes
-            DirectoryInfo TheFolder = new DirectoryInfo(System.IO.Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName) + @"\Theme");
-            foreach (FileInfo NextFile in TheFolder.GetFiles())
-            {
-                if (NextFile.Extension == ".xaml" || NextFile.Extension == ".XAML")
-                {
-                    this.themes.Add(new Link { DisplayName = System.IO.Path.GetFileNameWithoutExtension(NextFile.Name), Source = new Uri(@"Theme\" + System.IO.Path.GetFileName(NextFile.Name), UriKind.Relative) });
-                }
-            }
-
-
             
             this.language.Add(new Link { DisplayName = "SimplifiedChinese", Source = new Uri("/RipStudio;component/Language/SimplifiedChinese.xaml", UriKind.Relative) });
             this.language.Add(new Link { DisplayName = "English", Source = new Uri("/RipStudio;component/Language/English.xaml", UriKind.Relative) });
 
-            DirectoryInfo TheFolder2 = new DirectoryInfo(System.IO.Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName) + @"\Language");
-            foreach (FileInfo NextFile in TheFolder2.GetFiles())
-            {
-                if (NextFile.Extension == ".xaml" || NextFile.Extension == ".XAML")
-                {
-                    this.language.Add(new Link { DisplayName = System.IO.Path.GetFileNameWithoutExtension(NextFile.Name), Source = new Uri(@"Language\" + System.IO.Path.GetFileName(NextFile.Name), UriKind.Relative) });
-                }
-            }
+            //this.themeImg.Add(new Link { DisplayName = "No", Source = null});
+            //DirectoryInfo TheFolder = new DirectoryInfo(System.IO.Path.GetDirectoryName(Process.GetCurrentProcess().MainModule.FileName) + @"\Background");
+            //foreach (FileInfo NextFile in TheFolder.GetFiles())
+            //{
+            //    if (NextFile.Extension == ".jpg" || NextFile.Extension == ".png" || NextFile.Extension == ".bmp" || NextFile.Extension == ".jpeg")
+            //    {
+            //        this.themeImg.Add(new Link { DisplayName = NextFile.Name, Source = new Uri( @"Background/" + NextFile.Name,UriKind.Relative) });
+            //    }
+            //}
 
             this.selectedLanguage = this.language.FirstOrDefault(l => l.Source.Equals(Properties.Settings.Default.Language_Uri));
             this.selectedTheme = this.themes.FirstOrDefault(l => l.Source.Equals(Properties.Settings.Default.Theme_Uri));
+            //this.selectedThemeImg = this.themeImg.FirstOrDefault(l => l.DisplayName.Equals(Properties.Settings.Default.ThemeImg_Name));
         }
         public LinkCollection Language
         {
@@ -104,7 +98,35 @@ namespace RipStudio.Pages.Settings.Content
         {
             get { return this.AccentColors; }
         }
-
+        public LinkCollection ThemeImg
+        {
+            get { return this.themeImg; }
+        }
+        public Link SelectedThemeImg
+        {
+            get { return this.selectedThemeImg; }
+            set
+            {
+                if (value.Source != null && value.Source.OriginalString != string.Empty)
+                {
+                    Properties.Settings.Default.ThemeImg_Uri = value.Source;
+                    Properties.Settings.Default.ThemeImg_Name = value.DisplayName;
+                    this.selectedThemeImg = value;
+                    ((Application.Current.FindResource("WindowBackgroundContent") as Rectangle).Fill as ImageBrush).ImageSource = new BitmapImage(value.Source);
+                    AppearanceManager.Current.ThemeSource = new Uri("/RipStudio;component/Assets/Style.xaml", UriKind.Relative);
+                    OnPropertyChanged("selectedThemeImg");
+                }
+                else
+                {
+                    Properties.Settings.Default.ThemeImg_Uri = null;
+                    Properties.Settings.Default.ThemeImg_Name = "No";
+                    this.selectedThemeImg = value;
+                    ((Application.Current.FindResource("WindowBackgroundContent") as Rectangle).Fill as ImageBrush).ImageSource = null;
+                    AppearanceManager.Current.ThemeSource = new Uri("/RipStudio;component/Assets/Style.xaml", UriKind.Relative);
+                    OnPropertyChanged("selectedThemeImg");
+                }
+            }
+        }
         public Link SelectedTheme
         {
             get { return this.selectedTheme; }
@@ -130,19 +152,7 @@ namespace RipStudio.Pages.Settings.Content
                Properties.Settings.Default.Language_DisplayName = value.DisplayName;
                this.selectedLanguage = value;
 
-               if (value.Source.ToString().Contains("component"))
-               {
-                   Application.Current.Resources.MergedDictionaries.FirstOrDefault(d => d.Source.OriginalString.Contains("anguage")).Source = Properties.Settings.Default.Language_Uri;
-               }
-               else
-               {
-                 ResourceDictionary rd=  Application.Current.Resources.MergedDictionaries.FirstOrDefault(d => d.Source.OriginalString.Contains("anguage"));
-               //Application.Current.Resources.MergedDictionaries.FirstOrDefault(d => d.Source.OriginalString.Contains("anguage")).Source = ((ResourceDictionary)Application.LoadComponent(Properties.Settings.Default.Language_Uri)).Source;
-               XmlTextReader xmlreader = new XmlTextReader(@"Language\SimplifiedChinese副本.xaml");
-                rd= XamlReader.Load(xmlreader) as ResourceDictionary;
-               //Application.Current.Resources.MergedDictionaries.Add(obj);
-               }
-
+               Application.Current.Resources.MergedDictionaries.FirstOrDefault(d => d.Source.OriginalString.Contains("anguage")).Source = Properties.Settings.Default.Language_Uri;
 
                ((MainWindow)((App)(Application.Current)).MainWindow).TL1.DisplayName = Application.Current.FindResource("TitleLinks_0") as string;
                ((MainWindow)((App)(Application.Current)).MainWindow).TL2.DisplayName = Application.Current.FindResource("TitleLinks_1") as string;
@@ -162,14 +172,14 @@ namespace RipStudio.Pages.Settings.Content
                ((MainWindow)((App)(Application.Current)).MainWindow).LG22.DisplayName = Application.Current.FindResource("AviSynth_Link_1") as string;
                ((MainWindow)((App)(Application.Current)).MainWindow).LG23.DisplayName = Application.Current.FindResource("AviSynth_Link_2") as string;
                ((MainWindow)((App)(Application.Current)).MainWindow).LG24.DisplayName = Application.Current.FindResource("AviSynth_Link_3") as string;
-               ((MainWindow)((App)(Application.Current)).MainWindow).LG61.DisplayName = Application.Current.FindResource("Extended_Link_0") as string;
-               ((MainWindow)((App)(Application.Current)).MainWindow).LG62.DisplayName = Application.Current.FindResource("Extended_Link_1") as string;
+               //((MainWindow)((App)(Application.Current)).MainWindow).LG61.DisplayName = Application.Current.FindResource("Extended_Link_0") as string;
+               //((MainWindow)((App)(Application.Current)).MainWindow).LG62.DisplayName = Application.Current.FindResource("Extended_Link_1") as string;
                ((MainWindow)((App)(Application.Current)).MainWindow).LG63.DisplayName = Application.Current.FindResource("Extended_Link_2") as string;
                if (((App)(Application.Current)).SP != null)
                {
                    ((App)(Application.Current)).SP.Link1.DisplayName = Application.Current.FindResource("Settings_Style") as string;
-                   ((App)(Application.Current)).SP.Link2.DisplayName = Application.Current.FindResource("Settings_Config") as string;
-                   ((App)(Application.Current)).SP.Link3.DisplayName = Application.Current.FindResource("Settings_About") as string;
+                   ((App)(Application.Current)).SP.Link2.DisplayName = Application.Current.FindResource("Settings_About") as string;
+                   //((App)(Application.Current)).SP.Link3.DisplayName = Application.Current.FindResource("Settings_About") as string;
                }
                     
                OnPropertyChanged("SelectedLanguage");
@@ -188,7 +198,21 @@ namespace RipStudio.Pages.Settings.Content
                     OnPropertyChanged("SelectedAccentColor");
                 }
             }
-            
+        }
+        public double Transparent
+        {
+            get { return Properties.Settings.Default.ThemeImg_Opacity; }
+            set
+            {
+                if (Properties.Settings.Default.ThemeImg_Opacity != value)
+                {
+                    ((Application.Current.FindResource("WindowBackgroundContent") as Rectangle).Fill as ImageBrush).Opacity = value/100.00;
+                    Properties.Settings.Default.ThemeImg_Opacity = (int)value;
+                    OnPropertyChanged("Transparent");
+                   
+                }
+            }
+
         }
     }
 }

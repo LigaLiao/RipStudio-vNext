@@ -1,25 +1,23 @@
-#include <Windows.h>
-#include <string>
-#include <stdint.h>
-#include <fstream>
+
 #include "libavs2x265.h"
-#include "..\Avisynth\avisynth.h"
-#include "x265.h"
-#include <sys/types.h>
-#include <sys/timeb.h>
-#pragma comment(lib, "..\\Avisynth\\avisynth.lib")
-#pragma comment(lib, "libx265.lib")
 using namespace libavs2x265;
-using namespace std;
-using namespace System;
-using namespace System::ComponentModel;
-X265Encoder::X265Encoder(String^ filename)
+
+X265Encoder::X265Encoder(String^ script, bool isfile)
 {
 	m_sc = new AvisynthCPP;
-	const char* infile = (const char*) (void *) (System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi(filename));
-	try {
+	const char* Script = (const char*) (void *) (System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi(script));
+	try
+	{
+		AVSValue arg(Script);
 		m_sc->env = CreateScriptEnvironment(AVISYNTH_INTERFACE_VERSION);
-		m_sc->res = m_sc->env->Invoke("Import", AVSValue(infile));
+		if (isfile)
+		{
+			m_sc->res = m_sc->env->Invoke("Import", AVSValue(&arg, 1));
+		}
+		else
+		{
+			m_sc->res = m_sc->env->Invoke("Eval", AVSValue(&arg, 1));
+		}
 		if (!m_sc->res.IsClip())
 		{
 			m_sc->env->ThrowError("didn't return clip.");
@@ -30,6 +28,25 @@ X265Encoder::X265Encoder(String^ filename)
 		{
 			m_sc->env->ThrowError("No Video.");
 		}
+		else
+		{
+			if (!m_sc->vi.IsYV12() && !m_sc->vi.IsYV24())
+			{
+				if (m_sc->vi.IsRGB())
+				{
+					m_sc->res = m_sc->env->Invoke("ConvertToYV24", AVSValue(&m_sc->res, 1));
+					m_sc->clip = m_sc->res.AsClip();
+					m_sc->vi = m_sc->clip->GetVideoInfo();
+				}
+				else
+				{
+					m_sc->res = m_sc->env->Invoke("ConvertToYV12", AVSValue(&m_sc->res, 1));
+					m_sc->clip = m_sc->res.AsClip();
+					m_sc->vi = m_sc->clip->GetVideoInfo();
+				}
+			}
+		}
+
 	}
 	catch (AvisynthError err) {
 		string s(err.msg);
@@ -44,142 +61,313 @@ X265Encoder::X265Encoder(String^ filename)
 	}
 }
 
-String^ X265Encoder::Start(String^ filename, BackgroundWorker^ bw, X265EncoderConfig^ Config)
+String^ X265Encoder::Start(String^ filename, BackgroundWorker^ bw, String^ config)
 {
 	const char* outfile = (const char*) (void *) (System::Runtime::InteropServices::Marshal::StringToHGlobalAnsi(filename));
 	std::fstream OutFile;
 	OutFile.open(outfile, std::fstream::binary | std::fstream::out);
-	struct timeb tb2;
-	ftime(&tb2);
-	int64_t startTime = ((int64_t) tb2.time * 1000 + (int64_t) tb2.millitm) * 1000;
-	try 
+
+	const x265_api* api;
+
+	x265_nal *Nals = NULL;
+	uint32_t iNal = 0;
+	x265_param* param ;
+	//x265_encoder* Encoder = NULL;
+	x265_encoder *encoder = NULL;
+	x265_picture *pic_in;
+	uint32_t outFrameCount = 0;
+	uint64_t totalbytes = 0;
+
+
+	char* preset =NULL;
+	char* tune =NULL;
+	char*  profile = NULL;
+	char*  depth ="0";
+	//应用设置
+	array<String^>^ ConfigArray = gcnew array<String^>(48);
+	array<String^>^ Config = gcnew array<String^>(2);
+	array<String^>^ SplitString = gcnew array<String^>(1);
+	try
 	{
-		int depth = 8;
-
-		char *buff = NULL;
-		x265_nal *Nals = NULL;
-		uint32_t iNal = 0;
-		x265_param* Param = NULL;
-		x265_encoder* Encoder = NULL;
-		x265_picture pic_orig, pic_out;
-		x265_picture *pic_in = &pic_orig;
-		uint32_t outFrameCount = 0;
-		uint64_t totalbytes;
-		Param = x265_param_alloc();
-		x265_param_default(Param);
-		Param->bRepeatHeaders = 1;//write sps,pps before keyframe
-		Param->sourceWidth = m_sc->vi.width;
-		Param->sourceHeight = m_sc->vi.height;
-		Param->fpsNum = m_sc->vi.fps_numerator;
-		Param->fpsDenom = m_sc->vi.fps_denominator;
-		Param->rc.rateControlMode = X265_RC_CRF;
-		Param->rc.rfConstant = 23;
-		Encoder = x265_encoder_open(Param);
-		if (Encoder == NULL){
-			return L"x265_encoder_open err";
-		}
-		x265_picture_init(Param, pic_in);
-		//uint32_t pixelbytes = depth > 8 ? 2 : 1;
-		//buff = (char *) malloc(pParam->sourceWidth * pParam->sourceHeight * 3 / 2);
-		buff = new char[Param->sourceWidth * Param->sourceHeight * 3 / 2];
-		pic_orig.colorSpace = X265_CSP_I420;
-		pic_orig.planes[0] = buff;
-		pic_orig.planes[1] = (char*) pic_orig.planes[0] + pic_orig.stride[0] * Param->sourceHeight;
-		pic_orig.planes[2] = (char*) pic_orig.planes[1] + pic_orig.stride[1] * (Param->sourceHeight >> x265_cli_csps[X265_CSP_I420].height[1]);
-		pic_orig.stride[0] = Param->sourceWidth* (depth > 8 ? 2 : 1);
-		pic_orig.stride[1] = pic_orig.stride[0] >> x265_cli_csps[X265_CSP_I420].width[1];
-		pic_orig.stride[2] = pic_orig.stride[0] >> x265_cli_csps[X265_CSP_I420].width[2];
-
-		for (uint64_t i_frame = 0; i_frame <m_sc->vi.num_frames; i_frame++)
+		SplitString[0] = "--";
+		ConfigArray = config->Split(SplitString, StringSplitOptions::RemoveEmptyEntries);
+		for each (String^ var in ConfigArray)
 		{
-			/* Read input frame */
-			PVideoFrame f = m_sc->clip->GetFrame(i_frame, m_sc->env);
-			pic_orig.planes[0] = (void *) f->GetReadPtr(PLANAR_Y);
-			pic_orig.planes[1] = (void *) f->GetReadPtr(PLANAR_U);
-			pic_orig.planes[2] = (void *) f->GetReadPtr(PLANAR_V);
-
-			int numEncoded = x265_encoder_encode(Encoder, &Nals, &iNal, pic_in, NULL);
-		    if(numEncoded>=0)
+			if (!String::IsNullOrWhiteSpace(var))
 			{
+				Config = var->Split(' ');
+				if (Config[0]->ToLower() == "preset")
+				{
+					preset = (char*) (void *) (Marshal::StringToHGlobalAnsi(Config[1]->Replace(" ", "")->ToLower()));
+				}
+				else if (Config[0]->ToLower() == "tune")
+				{
+					tune = (char*) (void *) (Marshal::StringToHGlobalAnsi(Config[1]->Replace(" ", "")->ToLower()));
+				}
+				else if (Config[0]->ToLower() == "profile")
+				{
+					profile = (char*) (void *) (Marshal::StringToHGlobalAnsi(Config[1]->Replace(" ", "")->ToLower()));
+				}
+				//else if (Config[0]->ToLower() == "output-depth")
+				//{
+				//	depth = (char*) (void *) (Marshal::StringToHGlobalAnsi(Config[1]->Replace(" ", "")->ToLower()));
+				//}
+			}
+			Config[0] = Config[1] = "";
+		}
+		api = x265_api_get(atoi(depth));
+		if (!api)
+		{
+			return "depth 设置错误";
+			//api = x265_api_get(0);
+		}
+
+		param = api->param_alloc();
+		if (!param)
+		{
+			return "Param Alloc failed!";
+		}
+
+		api->param_default(param);
+
+		if (api->param_default_preset(param, preset, tune) < 0)
+		{
+			return "preset or tune unrecognized\n";
+		}
+
+		param->vui.sarHeight = param->vui.sarWidth = 1;
+		param->bRepeatHeaders = 1;//write sps,pps before keyframe
+		param->totalFrames = m_sc->vi.num_frames;
+		param->sourceWidth = m_sc->vi.width;
+		param->sourceHeight = m_sc->vi.height;
+		param->fpsNum = m_sc->vi.fps_numerator;
+		param->fpsDenom = m_sc->vi.fps_denominator;
+		if (m_sc->vi.IsYV24())
+		{
+			param->internalCsp = X265_CSP_I444;
+		}
+		else
+		{
+			param->internalCsp = X265_CSP_I420;
+		}
+		//Param->internalBitDepth = 10;
+
+		for each (String^ var in ConfigArray)
+		{
+			if (!String::IsNullOrWhiteSpace(var))
+			{
+				Config = var->Split(' ');
+				if (Config[0]->ToLower() == "preset")
+				{
+				}
+				else if (Config[0]->ToLower() == "tune")
+				{
+				}
+				else if (Config[0]->ToLower() == "profile")
+				{
+				}
+				//else if (Config[0]->ToLower() == "output-depth")
+				//{
+				//}
+				else
+				{
+					switch (api->param_parse(param, (const char*) (void *) (Marshal::StringToHGlobalAnsi(Config[0]->ToLower())), (const char*) (void *) (Marshal::StringToHGlobalAnsi(Config[1]->ToLower()))))
+					{
+					case X265_PARAM_BAD_NAME:
+						return  L"BAD_NAME:" + Config[0] + " " + Config[1];
+						break;
+					case X265_PARAM_BAD_VALUE:
+						return  L"BAD_VALUE:" + Config[0] + " " + Config[1];
+						break;
+					}
+				}
+			}
+		}
+
+
+
+		if (api->param_apply_profile(param, profile) < 0)
+		{
+			return "profile Value Error";
+		}
+		//应用设置结束
+
+
+		//Encoder = x265_encoder_open(Param);
+		//if (Encoder == NULL){ return L"x265_encoder_open err"; }
+		//x265_encoder_parameters(Encoder, Param);
+
+		encoder = api->encoder_open(param);
+		if (!encoder)
+		{
+			return "failed to open encoder\n";
+
+			api->param_free(param);
+			api->cleanup();
+			exit(2);
+		}
+
+		if (!param->bRepeatHeaders)
+		{
+			if (api->encoder_headers(encoder, &Nals, &iNal) < 0)
+			{
+				return "Failure generating stream headers.";
+			}
+			else
+			{
+				for (uint32_t i = 0; i < iNal; i++)
+				{
+					OutFile.write((const char*) Nals->payload, Nals->sizeBytes);
+					totalbytes += Nals->sizeBytes;
+					Nals++;
+				}
+			}
+		}
+
+		
+
+
+		pic_in = api->picture_alloc();
+		pic_in->colorSpace = param->internalCsp;
+		pic_in->sliceType = X265_TYPE_AUTO;
+
+		api->picture_init(param, pic_in);
+
+		////pic_in->planes[0] = new char[Param->sourceWidth * Param->sourceHeight * 3 / 2];
+		//pic_in->planes[1] = (char*) pic_in->planes[0] + pic_in->stride[0] * Param->sourceHeight;
+		//pic_in->planes[2] = (char*) pic_in->planes[1] + pic_in->stride[1] * (Param->sourceHeight >> x265_cli_csps[pic_in->colorSpace].height[1]);
+		//pic_in->stride[0] = Param->sourceWidth;
+		//pic_in->stride[1] = pic_in->stride[0] >> x265_cli_csps[pic_in->colorSpace].width[1];
+		//pic_in->stride[2] = pic_in->stride[0] >> x265_cli_csps[pic_in->colorSpace].width[2];
+
+
+		double start = GetTickCount();
+		array<double>^ myArray = gcnew array<double>(3);
+		for (int i_frame = 0; i_frame < m_sc->vi.num_frames; i_frame++)
+		{
+			if (!bw->CancellationPending)
+			{
+				/* Read input frame */
+				PVideoFrame f = m_sc->clip->GetFrame(i_frame, m_sc->env);
+				pic_in->planes[0] = (void *) f->GetReadPtr(PLANAR_Y);
+				pic_in->planes[1] = (void *) f->GetReadPtr(PLANAR_U);
+				pic_in->planes[2] = (void *) f->GetReadPtr(PLANAR_V);
+				pic_in->stride[0] = f->GetPitch(PLANAR_Y);
+				pic_in->stride[1] = f->GetPitch(PLANAR_U);
+				pic_in->stride[2] = f->GetPitch(PLANAR_V);
+				pic_in->pts = pic_in->poc = i_frame;
+				int numEncoded = api->encoder_encode(encoder, &Nals, &iNal, pic_in, NULL);
+				if (numEncoded >= 0)
+				{
+					for (uint32_t i = 0; i < iNal; i++)
+					{
+						OutFile.write((const char*) Nals[i].payload, Nals[i].sizeBytes);
+						totalbytes += Nals[i].sizeBytes;
+					}
+				}
+				else
+				{
+					break;
+				}
+				outFrameCount += numEncoded;
+
+				myArray[0] = (double) outFrameCount / ((GetTickCount() - start) / 1000);
+				myArray[1] = ((double) param->totalFrames - (double) outFrameCount) / myArray[0];
+				myArray[2] = 0.008f * totalbytes * ((float) param->fpsNum / (float) param->fpsDenom) / ((float) outFrameCount);
+				bw->ReportProgress((int)(outFrameCount * 100 / param->totalFrames), myArray);
+			}
+			else
+			{
+				OutFile.flush();
+				OutFile.close();
+				api->encoder_close(encoder);
+				api->cleanup();
+				api->param_free(param);
+				api->picture_free(pic_in);
+
+				if (m_sc){ delete m_sc; }
+
+
+				int num = MultiByteToWideChar(0, 0, outfile, -1, NULL, 0);
+				wchar_t *wide = new wchar_t[num];
+				MultiByteToWideChar(0, 0, outfile, -1, wide, num);
+				DeleteFile(wide);
+				return  L"Cancel";
+			}
+		}
+		while (int numEncoded = x265_encoder_encode(encoder, &Nals, &iNal, NULL, NULL))
+		{
+			if (!bw->CancellationPending)
+			{
+				//int numEncoded = x265_encoder_encode(Encoder, &Nals, &iNal, NULL, NULL);
+				if (numEncoded < 0)
+				{
+					break;
+					//return  L"已完成编码";
+				}
 				for (uint32_t i = 0; i < iNal; i++)
 				{
 					OutFile.write((const char*) Nals[i].payload, Nals[i].sizeBytes);
 					totalbytes += Nals[i].sizeBytes;
 				}
+				outFrameCount += numEncoded;
+
+				myArray[0] = (double) outFrameCount / ((GetTickCount() - start) / 1000);
+				myArray[1] = ((double) param->totalFrames - (double) outFrameCount) / myArray[0];
+				myArray[2] = 0.008f * totalbytes * (param->fpsNum / param->fpsDenom) / ((float) outFrameCount);
+				bw->ReportProgress((int)(outFrameCount * 100 / param->totalFrames), myArray);
 			}
 			else
 			{
-				break;
+				OutFile.flush();
+				OutFile.close();
+				api->encoder_close(encoder);
+				api->cleanup();
+				api->param_free(param);
+				api->picture_free(pic_in);
+				if (m_sc){ delete m_sc; }
+
+
+				int num = MultiByteToWideChar(0, 0, outfile, -1, NULL, 0);
+				wchar_t *wide = new wchar_t[num];
+				MultiByteToWideChar(0, 0, outfile, -1, wide, num);
+				DeleteFile(wide);
+				return  L"Cancel";
 			}
-			outFrameCount += numEncoded;
-			//int64_t time = x265_mdate();
-
-			//if (!bProgress || !frameNum || (prevUpdateTime && time - prevUpdateTime < UPDATE_INTERVAL))
-			//	return;
-
-			struct timeb tb;
-			ftime(&tb);
-			int64_t time = ((int64_t) tb.time * 1000 + (int64_t) tb.millitm) * 1000;
-			
-			int64_t elapsed = time - startTime;
-			double fps = elapsed > 0 ? outFrameCount * 1000000. / elapsed : 0;
-			float bitrate = 0.008f * totalbytes * (Param->fpsNum / Param->fpsDenom) / ((float) outFrameCount);
-
-			//int eta = (int) (elapsed * (m_sc->vi.num_frames - outFrameCount) / ((int64_t) outFrameCount * 1000000));
-			//	sprintf("x265 [%.1f%%] %d/%d frames, %.2f fps, %.2f kb/s, eta %d:%02d:%02d",
-			//		100. * outFrameCount / m_sc->vi.num_frames, outFrameCount, m_sc->vi.num_frames, fps, bitrate,
-			//		eta / 3600, (eta / 60) % 60, eta % 60);
-
-
-			bw->ReportProgress((outFrameCount * 100 / m_sc->vi.num_frames), fps);
 		}
-		while (1)
-		{
-			int numEncoded = x265_encoder_encode(Encoder, &Nals, &iNal, NULL, NULL);
-			if (numEncoded < 0)
-			{
-				break;
-			}
-			for (uint32_t i = 0; i < iNal; i++)
-			{
-				OutFile.write((const char*) Nals[i].payload, Nals[i].sizeBytes);
-				totalbytes += Nals[i].sizeBytes;
-			}
-			outFrameCount += numEncoded;
-			struct timeb tb;
-			ftime(&tb);
-			int64_t time = ((int64_t) tb.time * 1000 + (int64_t) tb.millitm) * 1000;
-
-			int64_t elapsed = time - startTime;
-			double fps = elapsed > 0 ? outFrameCount * 1000000. / elapsed : 0;
-			float bitrate = 0.008f * totalbytes * (Param->fpsNum / Param->fpsDenom) / ((float) outFrameCount);
-
-			bw->ReportProgress((outFrameCount * 100 / m_sc->vi.num_frames), fps);
-		}
-		x265_encoder_close(Encoder);
-		x265_picture_free(pic_in);
-		x265_param_free(Param);
-		//free(buff);
-		delete buff;
 		OutFile.flush();
 		OutFile.close();
+		api->encoder_close(encoder);
+		api->cleanup();
+		api->param_free(param);
+		api->picture_free(pic_in);
+		if (m_sc){ delete m_sc; }
 
 
-
-		//m_sc->clip.~PClip();
-		//m_sc->res.~AVSValue();
-		//m_sc->env->DeleteScriptEnvironment();
-		//delete m_sc;
-		m_sc->clip->~IClip();
-		m_sc->clip.~PClip();
-		m_sc->res.~AVSValue();
-		m_sc->env->DeleteScriptEnvironment();
 	}
 	catch (AvisynthError err) {
-		//fprintf(stderr, "\nAvisynth error:\n%s\n", err.msg);
+		OutFile.flush();
+		OutFile.close();
+		api->encoder_close(encoder);
+		api->cleanup();
+		api->param_free(param);
+		api->picture_free(pic_in);
+		if (m_sc){ delete m_sc; }
+
 		return  gcnew String(err.msg);
 	}
-	bw->ReportProgress(100);
-	return  L"已完成编码";
+	catch (exception err)
+	{
+		OutFile.flush();
+		OutFile.close();
+		api->encoder_close(encoder);
+		api->cleanup();
+		api->param_free(param);
+		api->picture_free(pic_in);
+		if (m_sc){ delete m_sc; }
+
+		return  gcnew String(err.what());
+	}
+	return  L"END";
 
 }

@@ -1,0 +1,90 @@
+﻿<UserControl x:Class="RipStudio.Pages.Video.H264Config.Main"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006" 
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
+             xmlns:mui="http://firstfloorsoftware.com/ModernUI"
+             mc:Ignorable="d" 
+             d:DesignHeight="300" d:DesignWidth="600" Loaded="UserControl_Loaded">
+    <Grid Style="{StaticResource ContentRoot}" Margin="0,16,16,16" x:Name="MainGrid">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="0.8*"/>
+            <RowDefinition/>
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition/>
+            <ColumnDefinition/>
+        </Grid.ColumnDefinitions>
+        <Grid Grid.Row="1" Grid.ColumnSpan="2">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Center">
+                <TextBlock Text="预设:" ToolTip="默认值：medium&#x0a;变更选项，以权衡压缩效率和编码速度。&#x0a;如果指定了preset，变更的选项将会在套用所有其他的参数之前套用。&#x0a;通常应该将此选项设为所能忍受的最慢一个。" Margin="0,0,4,0"/>
+                <TextBlock x:Name="PresetValue" Text="Preset" />
+            </StackPanel>
+            <Slider x:Name="PresetS" VerticalAlignment="Center" Minimum="0" Maximum="9" Value="5" SmallChange="1" ValueChanged="Slider_ValueChanged" Margin="100,0,100,32"/>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center" Margin="0,32,0,0">
+                <TextBlock x:Name="EncodingModeTB" Text="Ratefactor:" Margin="0,0,4,0" />
+                <TextBlock x:Name="EncodingValueTB" Text="23" />
+            </StackPanel>
+            <Slider x:Name="EncodingValue" VerticalAlignment="Bottom" Minimum="0" Maximum="51" Value="23" SmallChange="1" ValueChanged="EncodingValue_ValueChanged"/>
+        </Grid>
+        <Grid Grid.Column="1">
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Right">
+                <TextBlock Text="档次:" Margin="0,2,4,0" ToolTip="默认值：High&#x0a;无限制输出资料流的profile。如果指定了profile，它会覆写所有其他的设定。&#x0a;所以如果指定了profile，将会保证得到一个相容的资料流。&#x0a;如果设了此选项，将会无法使用无失真（lossless）编码（--qp 0或--crf 0）。&#x0a;如果播放装置仅支援某个profile，则应该设此选项。大多数解码器都支援High profile，所以没有设定的必要。"/>
+                <ComboBox x:Name="Profile"  SelectedIndex="0"  Width="128">
+                    <ComboBoxItem Content="None"/>
+                    <ComboBoxItem Content="Baseline"/>
+                    <ComboBoxItem Content="Main"/>
+                    <ComboBoxItem Content="High"/>
+                </ComboBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Right">
+                <TextBlock Text="级别:" Margin="0,2,4,0" />
+                <ComboBox x:Name="Level"  SelectedIndex="0"  Width="128">
+                    <ComboBoxItem Content="Unrestricted"/>
+                    <ComboBoxItem Content="1.0"/>
+                    <ComboBoxItem Content="1b"/>
+                    <ComboBoxItem Content="1.1"/>
+                    <ComboBoxItem Content="1.2"/>
+                    <ComboBoxItem Content="1.3"/>
+                    <ComboBoxItem Content="2.0"/>
+                    <ComboBoxItem Content="2.1"/>
+                    <ComboBoxItem Content="2.2"/>
+                    <ComboBoxItem Content="3.0"/>
+                    <ComboBoxItem Content="3.1"/>
+                    <ComboBoxItem Content="3.2"/>
+                    <ComboBoxItem Content="4.0"/>
+                    <ComboBoxItem Content="4.1"/>
+                    <ComboBoxItem Content="4.2"/>
+                    <ComboBoxItem Content="5.0"/>
+                    <ComboBoxItem Content="5.1"/>
+                    <ComboBoxItem Content="5.2"/>
+                </ComboBox>
+            </StackPanel>
+        </Grid>
+        <Grid >
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Top" HorizontalAlignment="Left"  >
+                <TextBlock Text="编码模式:" Margin="0,2,4,0" />
+                <ComboBox x:Name="EncodingMode"  SelectedIndex="0"  MinWidth="128" SelectionChanged="EncodingMode_SelectionChanged">
+                    <ComboBoxItem Content="Constant Ratefactor"/>
+                    <ComboBoxItem Content="Average Bitrate"/>
+                    <ComboBoxItem Content="Constant Quantizer"/>
+                    <!--<ComboBoxItem Content="Automated2pass"/>
+                    <ComboBoxItem Content="Automated3pass"/>-->
+                </ComboBox>
+            </StackPanel>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Left">
+                <TextBlock Text="调谐:" Margin="0,2,4,0" ToolTip="默认值：无&#x0a;调整选项，以进一步最佳化为视讯的内容。&#x0a;如果指定了tune，变更的选项将会在--preset之后，但所有其他的参数之前套用。&#x0a;如果视讯的内容符合其中一个可用的调整值，则可以使用此选项，否则不要使用。" />
+                <ComboBox x:Name="Tune"  SelectedIndex="0"  MinWidth="128" >
+                    <ComboBoxItem Content="None"/>
+                    <ComboBoxItem Content="Film"/>
+                    <ComboBoxItem Content="Animation"/>
+                    <ComboBoxItem Content="Grain"/>
+                    <ComboBoxItem Content="StillImage"/>
+                    <ComboBoxItem Content="PSNR"/>
+                    <ComboBoxItem Content="SSIM"/>
+                </ComboBox>
+            </StackPanel>
+
+        </Grid>
+    </Grid>
+</UserControl>

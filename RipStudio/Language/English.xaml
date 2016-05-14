@@ -30,9 +30,11 @@
     <sys:String x:Key="Settings_Style">User Interface Style</sys:String>
     <sys:String x:Key="Settings_Config">Software configuration</sys:String>
     <sys:String x:Key="Settings_About">About</sys:String>
-
+    <sys:String x:Key="Settings_Opacity">Opacity:</sys:String>
+    <sys:String x:Key="Settings_Background">Background:</sys:String>
+    
     <!--IntroductionPage-->
-    <sys:String x:Key="Introduction" xml:space="preserve">       RipStudio vNext is the sequel to the first  RipStudio after it failed. Compare to the first version, it has been completely re-programmed. It's a modern video/audio re-codec software, mainly for sub groups, youtubers etc. It supports most of the codec spreading online, such as H.264, H.265, AAC, FLAC etc. Its,UI is modern, supports multi-language, and easy to use.&#13;       Different from the first RipStudio and meGUI,  MediaCoder etc, RipStudio is not a shell which calls other 3rd party program to work. It is progarmmed withC#/C++ and calls some open-source library insted of 3rd party apps.&#13;&#13;Currently in preview 2, lacks of function. Now only create script and audio codec aviliable. Looking foward to your feedback:-)</sys:String>
+    <sys:String x:Key="Introduction" xml:space="preserve">       RipStudio vNext is the sequel to the first  RipStudio after it failed. Compare to the first version, it has been completely re-programmed. It's a modern video/audio re-codec software, mainly for sub groups, youtubers etc. It supports most of the codec spreading online, such as H.264, H.265, AAC, FLAC etc. Its,UI is modern, supports multi-language, and easy to use.&#13;       Different from the first RipStudio and meGUI,  MediaCoder etc, RipStudio is not a shell which calls other 3rd party program to work. It is progarmmed withC#/C++ and calls some open-source library insted of 3rd party apps.&#13;&#13;This is the final preview, lots of bug fixes and program optimization improvements, the main function of full realization, with unprecedented software experience, Looking foward to your feedback:-)</sys:String>
 
     <!--AviSynthPage-->
     <sys:String x:Key="AviSynth_VideoInput" xml:space="preserve">VideoInput:  </sys:String>
@@ -43,7 +45,7 @@
     <sys:String x:Key="AviSynth_CheckBox_2">Add to encoder after saving</sys:String>
     <sys:String x:Key="AviSynth_CheckBox_3">Manually select save address</sys:String>
 
-    <sys:String x:Key="AviSynth_Button_0">OpenScript</sys:String>
+    <sys:String x:Key="AviSynth_Button_0">CheckScript</sys:String>
     <sys:String x:Key="AviSynth_Button_1">PreviewScript</sys:String>
     <sys:String x:Key="AviSynth_Button_2">SaveScript</sys:String>
     <sys:String x:Key="AviSynth_Button_3">Add</sys:String>

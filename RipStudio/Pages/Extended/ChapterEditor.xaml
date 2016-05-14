@@ -5,13 +5,35 @@
              xmlns:d="http://schemas.microsoft.com/expression/blend/2008" 
              xmlns:mui="http://firstfloorsoftware.com/ModernUI"
              mc:Ignorable="d" 
-             d:DesignHeight="300" d:DesignWidth="300">
+             d:DesignHeight="300" d:DesignWidth="600">
     <Grid Style="{StaticResource ContentRoot}">
-        <ScrollViewer>
-            <StackPanel MinWidth="200">
-                <TextBlock Text="BASIC PAGE" Style="{StaticResource Heading2}" />
-                <TextBlock Text="Content goes here" />
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="auto"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        <DataGrid Name="DG1" ItemsSource="{Binding}" AutoGenerateColumns="False" CanUserSortColumns="False" BorderThickness="1" BorderBrush="{DynamicResource Accent}" >
+            <DataGrid.Columns >
+                <mui:DataGridTextColumn Header="Timecode"  Binding="{Binding Timecode}"  Width="120" MinWidth="120" MaxWidth="120" />
+                <mui:DataGridTextColumn Header="Name" Binding="{Binding Name}"   Width="120" MinWidth="120" MaxWidth="120"/>
+            </DataGrid.Columns>
+        </DataGrid>
+        <Grid Grid.Column="1" Margin="32,32,0,32" HorizontalAlignment="Left" VerticalAlignment="Top" Height="192">
+            <TextBlock Text="提示：双击行就可以编辑，按回车可以新建一行。" HorizontalAlignment="Center" VerticalAlignment="Top" Margin="0,32,0,0" TextWrapping="Wrap"/>
+            <StackPanel Orientation="Horizontal" VerticalAlignment="Center" HorizontalAlignment="Center" >
+                <Button x:Name="Insert" Content="{DynamicResource AviSynth_Button_4}"  Width="75" Click="Insert_Click" Margin="0,0,2,0"/>
+                <Button x:Name="Delete" Content="{DynamicResource AviSynth_Button_5}"  Width="75" Click="Delete_Click" Margin="2,0"/>
+                <Button x:Name="Clear" Content="{DynamicResource AviSynth_Button_6}"  Width="75" Click="Clear_Click" Margin="2,0,0,0" />
+                <Button x:Name="Save" Content="保存"  Width="75"  Margin="4,0,0,0" Click="Save_Click" />
             </StackPanel>
-        </ScrollViewer>
+            <!--<TextBlock Text="Transition style:" HorizontalAlignment="Center" VerticalAlignment="Bottom"  Margin="0,0,100,3" />
+            <ComboBox HorizontalAlignment="Center" VerticalAlignment="Bottom" Width="90" SelectedIndex="0" Margin="100,0,0,0">
+                <ComboBoxItem Content="No"/>
+                <ComboBoxItem Content="Fade"/>
+                <ComboBoxItem Content="Dissolve"/>
+            </ComboBox>-->
+            <!--<Button Content="ff" VerticalAlignment="Bottom" HorizontalAlignment="Center" Click="Button_Click"/>-->
+        </Grid>
+
+
     </Grid>
 </UserControl>

@@ -3,65 +3,67 @@
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
         xmlns:mui="http://firstfloorsoftware.com/ModernUI"
         xmlns:app="clr-namespace:RipStudio" WindowStartupLocation="CenterScreen"
-        Title="RipStudio" IsTitleVisible="True" ContentSource="/Pages/Introduction.xaml" MinHeight="460" MinWidth="740"  Height="460" Width="740"
-        LogoData="M 42,19L 35.5,19L 33.25,27.5L 26.347,22.992C 24.6102,24.3424 23.114,25.9878 21.9336,27.8528L 38,38L 54.0664,27.8528C 52.886,25.9878 51.3898,24.3424 49.653,22.9919L 42.75,27.5L 40,21.25C 41,21.25 43,21.75 42.9999,21.7501C 42,19.25 42,19 42,19 Z M 23.7753,31.016L 21.0931,29.322C 19.7552,31.9233 19,34.8735 19,38C 19,38.6183 19.0295,39.2296 19.0873,39.8328L 23.7753,31.016 Z M 25.4709,32.0869L 19.666,43.0045C 20.0524,44.4233 20.5991,45.7761 21.2854,47.0421L 28.2904,33.8676L 25.4709,32.0869 Z M 29.9861,34.9386L 22.5081,49.0026C 23.2761,50.082 24.154,51.0777 25.1256,51.9733L 33.128,36.923L 29.9861,34.9386 Z M 34.8237,37.9939L 26.6986,53.275C 29.8571,55.6157 33.7669,57 38,57C 42.2331,57 46.1429,55.6157 49.3014,53.275L 41.1763,37.9939L 38,40L 34.8237,37.9939 Z M 42.872,36.923L 50.8744,51.9733C 51.846,51.0777 52.7239,50.082 53.4919,49.0026L 46.0139,34.9386L 42.872,36.923 Z M 47.7096,33.8676L 54.7146,47.0421C 55.401,45.7761 55.9476,44.4233 56.334,43.0045L 50.529,32.0869L 47.7096,33.8676 Z M 52.2247,31.016L 56.9127,39.8328C 56.9705,39.2297 57,38.6183 57,38C 57,34.8735 56.2448,31.9233 54.9069,29.322L 52.2247,31.016 Z " Icon="RS.ico" Closed="ModernWindow_Closed" Closing="ModernWindow_Closing" 
+        Title="  RipStudio vNext" IsTitleVisible="True" ContentSource="/Pages/Introduction.xaml" MinHeight="460" MinWidth="740"  Height="460" Width="740" 
+        Icon="RipStudio_Logo.ico" Closed="ModernWindow_Closed" Closing="ModernWindow_Closing" 
                  >
     <mui:ModernWindow.TitleLinks>
         <!--<mui:Link DisplayName="{StaticResource TitleLinks_1}" x:Name="TL1" Source="Pages/Settings/SettingsPage.xaml" />
         <mui:Link DisplayName="{StaticResource TitleLinks_2}" Source="https://www.ripstudio.com/help" />
         <mui:Link DisplayName="{StaticResource TitleLinks_3}" Source="Pages/JobQueue.xaml" />-->
-        <mui:Link DisplayName="{DynamicResource TitleLinks_0}" x:Name="TL1" Source="http://www.ripstudio.com/help" />
-        <mui:Link DisplayName="{DynamicResource TitleLinks_1}" x:Name="TL2" Source="Pages/Settings/SettingsPage.xaml" />
-        <mui:Link DisplayName="{DynamicResource TitleLinks_2}" x:Name="TL3" Source="Pages/JobQueue.xaml" />
+        <mui:Link DisplayName="{StaticResource TitleLinks_0}" x:Name="TL1" Source="http://www.ripstudio.net/" />
+        <mui:Link DisplayName="{StaticResource TitleLinks_1}" x:Name="TL2" Source="Pages/Settings/SettingsPage.xaml" />
+        <mui:Link DisplayName="{StaticResource TitleLinks_2}" x:Name="TL3" Source="Pages/JobQueue.xaml" />
     </mui:ModernWindow.TitleLinks>
 
     <mui:ModernWindow.MenuLinkGroups>
-        <mui:LinkGroup x:Name="LG1" DisplayName="{DynamicResource MenuLinkGroups_Welcome}" >
+        <mui:LinkGroup x:Name="LG1" DisplayName="{StaticResource MenuLinkGroups_Welcome}" >
             <mui:LinkGroup.Links>
-                <mui:Link x:Name="LG11" DisplayName="{DynamicResource Welcome_Link_0}" Source="/Pages/Introduction.xaml" />
+                <mui:Link x:Name="LG11" DisplayName="{StaticResource Welcome_Link_0}" Source="/Pages/Introduction.xaml" />
             </mui:LinkGroup.Links>
         </mui:LinkGroup>
-        <mui:LinkGroup x:Name="LG2" DisplayName="{DynamicResource MenuLinkGroups_AviSynth}">
+        <mui:LinkGroup x:Name="LG2" DisplayName="{StaticResource MenuLinkGroups_AviSynth}">
             <mui:LinkGroup.Links>
-                <mui:Link x:Name="LG21" DisplayName="{DynamicResource AviSynth_Link_0}" Source="Pages/ScriptCreater/Main.xaml" />
-                <mui:Link x:Name="LG22" DisplayName="{DynamicResource AviSynth_Link_1}" Source="Pages/ScriptCreater/Video.xaml" />
-                <mui:Link x:Name="LG23" DisplayName="{DynamicResource AviSynth_Link_2}" Source="Pages/ScriptCreater/Audio.xaml" />
-                <mui:Link x:Name="LG24" DisplayName="{DynamicResource AviSynth_Link_3}" Source="Pages/ScriptCreater/Cut.xaml" />
+                <mui:Link x:Name="LG21" DisplayName="{StaticResource AviSynth_Link_0}" Source="Pages/ScriptCreater/Main.xaml" />
+                <mui:Link x:Name="LG22" DisplayName="{StaticResource AviSynth_Link_1}" Source="Pages/ScriptCreater/Video.xaml" />
+                <mui:Link x:Name="LG23" DisplayName="{StaticResource AviSynth_Link_2}" Source="Pages/ScriptCreater/Audio.xaml" />
+                <mui:Link x:Name="LG24" DisplayName="{StaticResource AviSynth_Link_3}" Source="Pages/ScriptCreater/Cut.xaml" />
             </mui:LinkGroup.Links>
         </mui:LinkGroup>
-        <mui:LinkGroup x:Name="LG3" DisplayName="{DynamicResource MenuLinkGroups_Video}">
+        <mui:LinkGroup x:Name="LG3" DisplayName="{StaticResource MenuLinkGroups_Video}">
             <mui:LinkGroup.Links>
                 <mui:Link DisplayName="H.264" Source="Pages/Video/H264Page.xaml" />
                 <mui:Link DisplayName="H.265" Source="Pages/Video/H265Page.xaml" />
             </mui:LinkGroup.Links>
         </mui:LinkGroup>
-        <mui:LinkGroup x:Name="LG4" DisplayName="{DynamicResource MenuLinkGroups_Audio}">
+        <mui:LinkGroup x:Name="LG4" DisplayName="{StaticResource MenuLinkGroups_Audio}">
             <mui:LinkGroup.Links>
                 <mui:Link DisplayName="AAC" Source="Pages/Audio/AAC.xaml" />
                 <mui:Link DisplayName="FLAC" Source="Pages/Audio/FLAC.xaml" />
                 <mui:Link DisplayName="WAV" Source="Pages/Audio/WAV.xaml" />
             </mui:LinkGroup.Links>
         </mui:LinkGroup>
-        <mui:LinkGroup x:Name="LG5" DisplayName="{DynamicResource MenuLinkGroups_Mux}">
+        <mui:LinkGroup x:Name="LG5" DisplayName="{StaticResource MenuLinkGroups_Mux}">
             <mui:LinkGroup.Links>
                 <mui:Link DisplayName="MP4" Source="Pages/Muxer/mp4.xaml" />
                 <mui:Link DisplayName="MKV" Source="Pages/Muxer/mkv.xaml" />
             </mui:LinkGroup.Links>
         </mui:LinkGroup>
-        <mui:LinkGroup x:Name="LG6" DisplayName="{DynamicResource MenuLinkGroups_Extended}">
+        <mui:LinkGroup x:Name="LG6" DisplayName="{StaticResource MenuLinkGroups_Extended}">
             <mui:LinkGroup.Links>
-                <mui:Link x:Name="LG61" DisplayName="{DynamicResource Extended_Link_0}" Source="Pages/Extended/MediaInfoPG.xaml" />
-                <!--<mui:Link DisplayName="章节创建器" Source="Pages/Extended/ChapterEditor.xaml" />-->
-                <mui:Link x:Name="LG62" DisplayName="{DynamicResource Extended_Link_1}"  Source="Pages/Extended/ApictureEncode.xaml" />
-                <mui:Link x:Name="LG63" DisplayName="{DynamicResource Extended_Link_2}"  Source="Pages/Extended/EasyEncode.xaml" />
+                <!--<mui:Link x:Name="LG61" DisplayName="{StaticResource Extended_Link_2}"  Source="Pages/Extended/AutoEncode.xaml" />-->
+                <mui:Link x:Name="LG62" DisplayName="{StaticResource Extended_Link_0}" Source="Pages/Extended/MediaInfoPG.xaml" />
+                <mui:Link x:Name="LG63" DisplayName="繁化姬" Source="Pages/Extended/FanHuaJi.xaml" />
+                <mui:Link x:Name="LG64" DisplayName="章节创建器" Source="Pages/Extended/ChapterEditor.xaml" />
+                <mui:Link x:Name="LG65" DisplayName="For OverSpeed" Source="Pages/Extended/OverSpeed.xaml" />
+               
             </mui:LinkGroup.Links>
         </mui:LinkGroup>
-        <mui:LinkGroup x:Name="LG7" DisplayName="{DynamicResource TitleLinks_1}" GroupKey="Settings">
+        <mui:LinkGroup x:Name="LG7" DisplayName="{StaticResource TitleLinks_1}" GroupKey="Settings">
             <mui:LinkGroup.Links>
                 <mui:Link  Source="Pages/Settings/SettingsPage.xaml" />
             </mui:LinkGroup.Links>
         </mui:LinkGroup>
-        <mui:LinkGroup x:Name="LG8" DisplayName="{DynamicResource TitleLinks_2}" GroupKey="JobQueue">
+        <mui:LinkGroup x:Name="LG8" DisplayName="{StaticResource TitleLinks_2}" GroupKey="JobQueue">
             <mui:LinkGroup.Links>
                 <mui:Link  Source="Pages/JobQueue.xaml" />
             </mui:LinkGroup.Links>
